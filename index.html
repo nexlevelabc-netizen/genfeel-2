@@ -1548,118 +1548,50 @@
         }
 
         function submitBooking() {
-        console.log("🚀 Starting booking submission...");
-        
-        // Generate reference if not already done
-        if (!booking.ref) {
-            booking.ref = generateRef();
-        }
-        
-        // Data for all destinations
-        const bookingData = {
-            reference: booking.ref,
-            service: booking.service,
-            name: booking.name,
-            email: booking.email,
-            phone: booking.phone,
-            date: booking.dateDisplay,
-            time: booking.time,
-            timezone: "UK",
-            notes: booking.notes || "No notes",
-            source: "Genfeel Chatbot"
-        };
+    console.log("🚀 Starting booking submission...");
+    
+    // Data for Zapier
+    const bookingData = {
+        reference: booking.ref,
+        service: booking.service,
+        name: booking.name,
+        email: booking.email,
+        phone: booking.phone,
+        date: booking.dateDisplay,
+        time: booking.time,
+        timezone: "UK",
+        notes: booking.notes || "No notes",
+        source: "Genfeel Chatbot"
+    };
 
-        console.log("📤 Sending booking data...");
+    console.log("📤 Sending to Zapier...");
 
-        // 1. Send to Zapier
-        fetch("https://hooks.zapier.com/hooks/catch/26098855/uqos5cs/", {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(bookingData)
-        });
+    // 1. Send to Zapier (primary)
+    fetch("https://hooks.zapier.com/hooks/catch/26098855/uqos5cs/", {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData)
+    }).then(function() {
+        console.log("✅ Sent to Zapier");
+    }).catch(function(err) {
+        console.log("⚠️ Zapier error:", err);
+    });
 
-        // 2. Send emails using hidden forms in new tabs
-        setTimeout(() => {
-            // Email to you (genfeel)
-            const yourForm = document.createElement('form');
-            yourForm.style.display = 'none';
-            yourForm.method = 'POST';
-            yourForm.action = 'https://formsubmit.co/hello@genfeel.co.uk';
-            yourForm.target = '_blank';
-            
-            const yourData = {
-                _subject: `📅 New Booking: ${booking.ref}`,
-                reference: booking.ref,
-                service: booking.service,
-                name: booking.name,
-                email: booking.email,
-                phone: booking.phone,
-                date: booking.dateDisplay,
-                time: booking.time + ' (UK)',
-                notes: booking.notes || 'No notes',
-                _captcha: 'false',
-                _replyto: booking.email
-            };
-            
-            for (const key in yourData) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = yourData[key];
-                yourForm.appendChild(input);
-            }
-            
-            // Email to customer
-            const customerForm = document.createElement('form');
-            customerForm.style.display = 'none';
-            customerForm.method = 'POST';
-            customerForm.action = 'https://formsubmit.co/' + booking.email;
-            customerForm.target = '_blank';
-            
-            const customerData = {
-                _subject: `✅ Your Genfeel Booking Confirmation: ${booking.ref}`,
-                _template: 'table',
-                reference: booking.ref,
-                service: booking.service,
-                name: booking.name,
-                date: booking.dateDisplay,
-                time: booking.time + ' (UK)',
-                _replyto: 'hello@genfeel.co.uk',
-                _autoresponse: `Hi ${booking.name.split(' ')[0]}, thank you for booking with Genfeel! Your appointment is confirmed for ${booking.dateDisplay} at ${booking.time} (UK time).`
-            };
-            
-            for (const key in customerData) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = customerData[key];
-                customerForm.appendChild(input);
-            }
-            
-            // Submit both forms
-            document.body.appendChild(yourForm);
-            document.body.appendChild(customerForm);
-            yourForm.submit();
-            customerForm.submit();
-            
-            // Clean up
-            setTimeout(() => {
-                if (yourForm.parentNode) document.body.removeChild(yourForm);
-                if (customerForm.parentNode) document.body.removeChild(customerForm);
-            }, 3000);
-        }, 100);
-
-        // Show success message
-        setTimeout(() => {
-            addMsg(`✅ <strong>Booking Confirmed!</strong><br><br>
-            🔖 <strong>Reference:</strong> ${booking.ref}<br>
-            📅 <strong>Date:</strong> ${booking.dateDisplay}<br>
-            ⏰ <strong>Time:</strong> ${booking.time} (UK)<br>
-            📧 <strong>Confirmation sent to:</strong> ${booking.email}<br><br>
-            <em>Check your email for confirmation from hello@genfeel.co.uk</em>`, "bot");
-        }, 1000);
-    }
+    // 2. Send email WITHOUT using FormSubmit (to avoid activation)
+    // Instead, we'll just show success and let Zapier handle emails
+    console.log("✅ Booking processed via Zapier");
+    
+    // Show success message
+    setTimeout(function() {
+        addMsg(`✅ <strong>Booking Confirmed!</strong><br><br>
+        🔖 <strong>Reference:</strong> ${booking.ref}<br>
+        📅 <strong>Date:</strong> ${booking.dateDisplay}<br>
+        ⏰ <strong>Time:</strong> ${booking.time} (UK)<br>
+        📧 <strong>Confirmation sent to:</strong> ${booking.email}<br><br>
+        <em>Zapier will send your confirmation email.</em>`, "bot");
+    }, 500);
+}
 
       function speak(text) {
             if (isMuted) return;
