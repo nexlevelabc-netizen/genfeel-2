@@ -1,0 +1,2268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genfeel - Digital Made Human | Tech with a Heartbeat</title>
+    
+    <!-- Favicons (temporarily disabled for local testing) -->
+    <!-- 
+    <link rel="shortcut icon" href="/images/favicon.ico?v=3" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=3">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=3">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=3">
+    <link rel="icon" sizes="192x192" href="/images/android-chrome-192x192.png?v=3">
+    <link rel="icon" sizes="512x512" href="/images/android-chrome-512x512.png?v=3">
+    <link rel="manifest" href="/images/site.webmanifest?v=3">
+    -->
+    
+    <meta name="description" content="We create digital experiences that people enjoy using. Websites, mobile apps, Chatbot and Voice Agent AI that feel natural and human.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome for Social Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- React & Dependencies -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <style>
+        /* ===== COMPLETE CSS - ALL STYLES ===== */
+        :root {
+            --color-primary: #6366f1;
+            --color-primary-light: #818cf8;
+            --color-secondary: #ec4899;
+            --color-accent: #06b6d4;
+            --color-background: #0a0a0f;
+            --color-surface: #1a1a24;
+            --color-surface-light: #252532;
+            --color-text-primary: #ffffff;
+            --color-text-secondary: #a1a1aa;
+            --color-text-tertiary: #71717a;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+            --gradient-mesh: radial-gradient(at 40% 20%, rgba(99, 102, 241, 0.3) 0px, transparent 50%),
+                           radial-gradient(at 80% 0%, rgba(236, 72, 153, 0.3) 0px, transparent 50%),
+                           radial-gradient(at 0% 50%, rgba(6, 182, 212, 0.3) 0px, transparent 50%);
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-heading: 'Space Grotesk', var(--font-primary);
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-2xl: 4rem;
+            --spacing-3xl: 6rem;
+            --radius-sm: 0.5rem;
+            --radius-md: 1rem;
+            --radius-lg: 1.5rem;
+            --radius-xl: 2rem;
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background: var(--color-background);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
+        h2 { font-size: clamp(2rem, 4vw, 3.5rem); }
+        h3 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
+
+        a { color: inherit; text-decoration: none; }
+        button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+        img { max-width: 100%; height: auto; display: block; }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--color-background); }
+        ::-webkit-scrollbar-thumb { background: var(--color-surface-light); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+        ::selection { background: var(--color-primary); color: white; }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg);
+        }
+
+        .gradient-text {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: var(--spacing-md) 0;
+            transition: all var(--transition-base);
+        }
+
+        .navbar.scrolled {
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-sm) 0;
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            transition: transform var(--transition-base);
+            cursor: pointer;
+        }
+
+        .navbar-logo:hover { transform: scale(1.05); }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            font-weight: 800;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: var(--spacing-lg);
+            align-items: center;
+        }
+
+        .nav-link {
+            position: relative;
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            transition: color var(--transition-base);
+            padding: var(--spacing-xs) 0;
+            cursor: pointer;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width var(--transition-base);
+        }
+
+        .nav-link:hover, .nav-link.active { color: var(--color-text-primary); }
+        .nav-link.active::after, .nav-link:hover::after { width: 100%; }
+
+        /* BUTTONS */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            transition: all var(--transition-base);
+            display: inline-block;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        .btn-block { width: 100%; }
+
+        /* MOBILE MENU */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            padding: var(--spacing-xs);
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 25px;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--color-text-primary);
+            transition: all var(--transition-base);
+        }
+
+        .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(7px, 7px); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
+
+        .mobile-menu {
+            display: none;
+            background: rgba(26, 26, 36, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-lg);
+        }
+
+        .mobile-menu.open { display: block; }
+
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .mobile-nav-link {
+            color: var(--color-text-secondary);
+            font-weight: 500;
+            font-size: 1.125rem;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .mobile-nav-link:hover, .mobile-nav-link.active {
+            color: var(--color-text-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: var(--spacing-3xl) 0;
+            margin-top: 80px;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+        }
+
+        .gradient-mesh {
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-mesh);
+            opacity: 0.5;
+            animation: meshMove 20s ease-in-out infinite;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.25rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-primary-light);
+        }
+
+        .hero-title {
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.1;
+        }
+
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-description em {
+            font-style: italic;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-bottom: var(--spacing-2xl);
+            flex-wrap: wrap;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: var(--spacing-lg);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .stat-item { text-align: center; }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+        }
+
+        /* SERVICES */
+        .services-section, .detailed-services {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .section-title { margin-bottom: var(--spacing-md); }
+
+        .section-description {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .service-card {
+            background: var(--color-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.2);
+            transform: translateY(-10px);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .service-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.6;
+        }
+
+        .service-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .service-link {
+            color: var(--color-primary-light);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap var(--transition-base);
+            cursor: pointer;
+        }
+
+        .service-link:hover { gap: 0.75rem; }
+
+        /* DETAILED SERVICES */
+        .detailed-service {
+            background: var(--color-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .service-icon-large {
+            font-size: 4rem;
+            line-height: 1;
+        }
+
+        .service-title-large {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .service-tagline {
+            color: var(--color-text-secondary);
+            font-style: italic;
+        }
+
+        /* WHY SECTION */
+        .why-section {
+            padding: var(--spacing-3xl) 0;
+            background: var(--color-surface);
+        }
+
+        .why-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-2xl);
+            align-items: center;
+        }
+
+        .why-description {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .why-visual {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .visual-card {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            transition: transform var(--transition-base);
+        }
+
+        .visual-card:hover { transform: translateX(10px); }
+
+        .visual-content h4 {
+            font-size: 1.25rem;
+            margin-bottom: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .visual-content p { color: var(--color-text-secondary); }
+
+        .pulse-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .cta-content {
+            text-align: center;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-3xl);
+        }
+
+        .cta-title { margin-bottom: var(--spacing-md); }
+
+        .cta-description {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* PRICING */
+        .pricing-section {
+            padding: var(--spacing-3xl) 0;
+            background: var(--color-surface);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-2xl);
+        }
+
+        .pricing-card {
+            background: var(--color-background);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            position: relative;
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+
+        .pricing-card.highlighted {
+            border-color: var(--color-primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            right: var(--spacing-lg);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.375rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .package-name {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .package-price {
+            font-size: 3rem;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .package-description {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .package-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .package-features li {
+            padding-left: var(--spacing-lg);
+            position: relative;
+            color: var(--color-text-secondary);
+        }
+
+        .package-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+
+        /* CONTACT PAGE */
+        .contact-page, .services-page, .about-page, .get-started-page {
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+
+        .contact-hero, .services-hero {
+            padding: var(--spacing-3xl) 0;
+            text-align: center;
+        }
+
+        .services-hero {
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-2xl);
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xl);
+        }
+
+        .contact-info-item {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .contact-form, .checkout-form {
+            background: var(--color-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-text-secondary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            font-family: var(--font-primary);
+            transition: all var(--transition-base);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--color-text-tertiary);
+        }
+
+        /* GET STARTED PAGE */
+        .get-started-header {
+            text-align: center;
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .package-selection {
+            padding-bottom: var(--spacing-3xl);
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .checkout-section {
+            padding: var(--spacing-3xl) 0;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--color-text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-base);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-2xl);
+        }
+
+        .order-summary {
+            background: var(--color-surface);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            height: fit-content;
+        }
+
+        .summary-item {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-total {
+            padding: 1.5rem 0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .form-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .form-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .success-message {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            background: var(--color-surface);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: var(--radius-lg);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto var(--spacing-lg);
+        }
+
+        .payment-notice {
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin-top: var(--spacing-md);
+        }
+
+        /* FOOTER */
+        .footer {
+            background: var(--color-surface);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: var(--spacing-3xl) 0 var(--spacing-lg);
+            margin-top: var(--spacing-3xl);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: var(--font-heading);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-description {
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-secondary);
+            transition: all var(--transition-base);
+            text-decoration: none;
+            font-size: 1.25rem;
+        }
+
+        .social-link:hover {
+            background: var(--gradient-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .footer-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .footer-links a {
+            color: var(--color-text-secondary);
+            transition: color var(--transition-base);
+            cursor: pointer;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--color-text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 968px) {
+            .why-content, .checkout-grid, .contact-container {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-links, .desktop-only {
+                display: none !important;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .service-header {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                min-height: auto;
+                padding: var(--spacing-2xl) 0;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-description {
+                font-size: 1.125rem;
+            }
+
+            .hero-cta, .cta-buttons {
+                flex-direction: column;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .services-grid, .packages-grid, .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-content {
+                padding: var(--spacing-xl);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+                text-align: center;
+            }
+
+            .footer-bottom-links {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+            }
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0a0a0f;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    ">
+        <div style="
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(99, 102, 241, 0.3);
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        "></div>
+        <p style="
+            color: #a1a1aa;
+            margin-top: 20px;
+            font-family: 'Inter', sans-serif;
+        ">Loading Genfeel...</p>
+    </div>
+
+    <div id="root"></div>
+    
+    <!-- Load React App -->
+    <script src="genfeel-app.js"></script>
+    
+    <!-- Chatbot Widget -->
+    <div id="gc-widget">
+        <div id="gc-window">
+            <div id="gc-header">
+                <span id="gc-header-title">💬 Genfeel Assistant</span>
+                <div id="gc-header-buttons">
+                    <button id="gc-reset" title="New Chat">🔄</button>
+                    <button id="gc-close" title="Close">✕</button>
+                </div>
+            </div>
+            <div id="gc-progress">
+                <div id="gc-progress-bar">
+                    <div class="gc-progress-dot" data-step="1"></div>
+                    <div class="gc-progress-dot" data-step="2"></div>
+                    <div class="gc-progress-dot" data-step="3"></div>
+                    <div class="gc-progress-dot" data-step="4"></div>
+                    <div class="gc-progress-dot" data-step="5"></div>
+                    <div class="gc-progress-dot" data-step="6"></div>
+                </div>
+            </div>
+            <div id="gc-messages"></div>
+            <div id="gc-input-area">
+                <input type="text" id="gc-input" placeholder="Type your message...">
+                <button id="gc-send">Send</button>
+                <button id="gc-voice">🎤</button>
+                <button id="gc-mute" class="gc-muted">🔇</button>
+            </div>
+        </div>
+        <button id="gc-bubble">💬</button>
+    </div>
+
+    <script>
+    (function() {
+        // Chatbot variables
+        var bubble = document.getElementById("gc-bubble");
+        var chatWindow = document.getElementById("gc-window");
+        var closeBtn = document.getElementById("gc-close");
+        var resetBtn = document.getElementById("gc-reset");
+        var messages = document.getElementById("gc-messages");
+        var input = document.getElementById("gc-input");
+        var sendBtn = document.getElementById("gc-send");
+        var voiceBtn = document.getElementById("gc-voice");
+        var muteBtn = document.getElementById("gc-mute");
+        var progress = document.getElementById("gc-progress");
+        
+        var isMuted = true;
+        var isListening = false;
+        var recognition = null;
+        
+        var bookingMode = false;
+        var bookingStep = 0;
+        var booking = {
+            service: "",
+            name: "",
+            email: "",
+            phone: "",
+            date: "",
+            dateDisplay: "",
+            time: "",
+            notes: "",
+            ref: ""
+        };
+
+        var services = [
+            { name: "Website - Starter", price: "£299", desc: "1-3 pages, responsive design" },
+            { name: "Website - Professional", price: "£749", desc: "5-8 pages, CMS, SEO", popular: true },
+            { name: "Website - Business", price: "£1,499", desc: "Dashboard, payments, portal" },
+            { name: "Mobile App", price: "From £499", desc: "iOS & Android development" },
+            { name: "AI Chatbot", price: "From £199", desc: "Smart chatbot for your site" },
+            { name: "Voice Agent", price: "From £249", desc: "Voice-powered assistant" },
+            { name: "General Consultation", price: "Free", desc: "Discuss your project needs" }
+        ];
+
+        var timeSlots = [
+            { time: "9:00 AM", available: true },
+            { time: "10:00 AM", available: true },
+            { time: "11:00 AM", available: true },
+            { time: "12:00 PM", available: false },
+            { time: "2:00 PM", available: true },
+            { time: "3:00 PM", available: true },
+            { time: "4:00 PM", available: true },
+            { time: "5:00 PM", available: true }
+        ];
+
+        // Open chat
+        bubble.onclick = function() {
+            chatWindow.classList.add("gc-open");
+            bubble.style.display = "none";
+        };
+
+        // Close chat and reset
+        closeBtn.onclick = function() {
+            chatWindow.classList.remove("gc-open");
+            bubble.style.display = "flex";
+            
+            setTimeout(function() {
+                resetChat();
+            }, 300);
+        };
+
+        // Reset chat button
+        resetBtn.onclick = function() {
+            resetChat();
+        };
+
+        // Mute toggle
+        muteBtn.onclick = function() {
+            isMuted = !isMuted;
+            if (isMuted) {
+                muteBtn.textContent = "🔇";
+                muteBtn.classList.add("gc-muted");
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+            } else {
+                muteBtn.textContent = "🔊";
+                muteBtn.classList.remove("gc-muted");
+            }
+        };
+
+        // Reset chat function
+        function resetChat() {
+            messages.innerHTML = "";
+            bookingMode = false;
+            bookingStep = 0;
+            booking = { service: "", name: "", email: "", phone: "", date: "", dateDisplay: "", time: "", notes: "", ref: "" };
+            updateProgress(0);
+            clearExtras();
+            
+            addMsg("Hi! I'm Genfeel's assistant 👋\n\nHow can I help you today?", "bot");
+            setTimeout(function() {
+                addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
+            }, 400);
+        }
+
+        function addMsg(text, type) {
+            var div = document.createElement("div");
+            div.className = "gc-msg gc-msg-" + type;
+            div.innerHTML = text.replace(/\n/g, "<br>");
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function addQuickBtns(options) {
+            var container = document.createElement("div");
+            container.className = "gc-quick-btns";
+            options.forEach(function(opt) {
+                var btn = document.createElement("button");
+                btn.className = "gc-quick-btn";
+                btn.textContent = opt;
+                btn.onclick = function() {
+                    input.value = opt;
+                    sendMsg();
+                    container.remove();
+                };
+                container.appendChild(btn);
+            });
+            messages.appendChild(container);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function addCancelBtn() {
+            var btn = document.createElement("button");
+            btn.className = "gc-cancel-btn";
+            btn.textContent = "✕ Cancel Booking";
+            btn.onclick = function() {
+                cancelBooking();
+            };
+            messages.appendChild(btn);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showServices() {
+            services.forEach(function(s) {
+                var card = document.createElement("div");
+                card.className = "gc-service-card";
+                card.innerHTML = '<div class="gc-service-card-title">' + s.name + (s.popular ? ' ⭐' : '') + '</div><div class="gc-service-card-price">' + s.price + ' • ' + s.desc + '</div>';
+                card.onclick = function() {
+                    input.value = s.name;
+                    sendMsg();
+                };
+                messages.appendChild(card);
+            });
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showDates() {
+            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            var today = new Date();
+            var added = 0;
+            var current = new Date(today);
+            
+            while (added < 5) {
+                current.setDate(current.getDate() + 1);
+                var dayOfWeek = current.getDay();
+                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+                
+                var dayName = days[dayOfWeek];
+                var dateStr = current.getDate() + " " + months[current.getMonth()];
+                var fullDate = dayName + ", " + dateStr;
+                
+                (function(fd) {
+                    var btn = document.createElement("button");
+                    btn.className = "gc-date-btn";
+                    btn.innerHTML = '<span>' + dayName + '</span><span>' + dateStr + '</span>';
+                    btn.onclick = function() {
+                        booking.dateDisplay = fd;
+                        input.value = fd;
+                        sendMsg();
+                    };
+                    messages.appendChild(btn);
+                })(fullDate);
+                
+                added++;
+            }
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showTimes() {
+            var grid = document.createElement("div");
+            grid.className = "gc-time-grid";
+            
+            timeSlots.forEach(function(slot) {
+                var btn = document.createElement("button");
+                btn.className = "gc-time-btn" + (slot.available ? "" : " gc-unavailable");
+                btn.textContent = slot.time;
+                
+                if (slot.available) {
+                    btn.onclick = function() {
+                        input.value = slot.time;
+                        sendMsg();
+                    };
+                }
+                grid.appendChild(btn);
+            });
+            
+            messages.appendChild(grid);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showSummary() {
+            var summary = document.createElement("div");
+            summary.className = "gc-summary";
+            summary.innerHTML = '<div class="gc-summary-title">📋 Booking Summary</div>' +
+                '<div class="gc-summary-row"><span class="gc-summary-label">Service</span><span class="gc-summary-value">' + booking.service + '</span></div>' +
+                '<div class="gc-summary-row"><span class="gc-summary-label">Name</span><span class="gc-summary-value">' + booking.name + '</span></div>' +
+                '<div class="gc-summary-row"><span class="gc-summary-label">Email</span><span class="gc-summary-value">' + booking.email + '</span></div>' +
+                '<div class="gc-summary-row"><span class="gc-summary-label">Phone</span><span class="gc-summary-value">' + booking.phone + '</span></div>' +
+                '<div class="gc-summary-row"><span class="gc-summary-label">Date</span><span class="gc-summary-value">' + booking.dateDisplay + '</span></div>' +
+                '<div class="gc-summary-row"><span class="gc-summary-label">Time</span><span class="gc-summary-value">' + booking.time + ' (UK)</span></div>' +
+                (booking.notes && booking.notes.toLowerCase() !== "skip" ? '<div class="gc-summary-row"><span class="gc-summary-label">Notes</span><span class="gc-summary-value">' + booking.notes + '</span></div>' : '') +
+                '<div class="gc-ref-number">Reference: ' + booking.ref + '</div>';
+            
+            messages.appendChild(summary);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function updateProgress(step) {
+            progress.style.display = step > 0 ? "block" : "none";
+            var dots = document.querySelectorAll(".gc-progress-dot");
+            dots.forEach(function(dot, i) {
+                dot.classList.remove("gc-active", "gc-done");
+                if (i + 1 < step) {
+                    dot.classList.add("gc-done");
+                } else if (i + 1 === step) {
+                    dot.classList.add("gc-active");
+                }
+            });
+        }
+
+        function generateRef() {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var ref = "GF-";
+            for (var i = 0; i < 6; i++) {
+                ref += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return ref;
+        }
+
+        function isValidEmail(email) {
+            return email.indexOf("@") > 0 && email.indexOf(".") > 0;
+        }
+
+        function isValidPhone(phone) {
+            return phone.replace(/\D/g, "").length >= 10;
+        }
+
+        function clearExtras() {
+            var items = document.querySelectorAll(".gc-quick-btns, .gc-service-card, .gc-date-btn, .gc-time-grid, .gc-cancel-btn");
+            items.forEach(function(el) { el.remove(); });
+        }
+
+        function startBooking() {
+            bookingMode = true;
+            bookingStep = 1;
+            booking = { service: "", name: "", email: "", phone: "", date: "", dateDisplay: "", time: "", notes: "", ref: "" };
+            updateProgress(1);
+            
+            setTimeout(function() {
+                addMsg("Great! Let's book your consultation. 📅\n\nFirst, which service are you interested in?", "bot");
+                speak("Great! Let's book your consultation. Which service are you interested in?");
+                showServices();
+                addCancelBtn();
+            }, 500);
+        }
+
+        function cancelBooking() {
+            bookingMode = false;
+            bookingStep = 0;
+            updateProgress(0);
+            clearExtras();
+            addMsg("Booking cancelled. No worries! 👍\n\nIs there anything else I can help with?", "bot");
+            addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
+        }
+
+        function handleBooking(text) {
+            var msg = text.toLowerCase().trim();
+            
+            switch(bookingStep) {
+                case 1:
+                    booking.service = text;
+                    bookingStep = 2;
+                    updateProgress(2);
+                    setTimeout(function() {
+                        addMsg("Excellent choice! ✨\n\nWhat's your full name?", "bot");
+                        speak("Excellent choice! What's your full name?");
+                    }, 500);
+                    break;
+                    
+                case 2:
+                    if (text.trim().length < 2) {
+                        addMsg("Please enter your full name (at least 2 characters).", "bot");
+                        return;
+                    }
+                    booking.name = text.trim();
+                    bookingStep = 3;
+                    updateProgress(3);
+                    setTimeout(function() {
+                        addMsg("Nice to meet you, " + booking.name.split(" ")[0] + "! 👋\n\nWhat's your email address?", "bot");
+                        speak("Nice to meet you! What's your email address?");
+                    }, 500);
+                    break;
+                    
+                case 3:
+                    if (!isValidEmail(text)) {
+                        addMsg("Please enter a valid email address (e.g., you@example.com).", "bot");
+                        return;
+                    }
+                    booking.email = text.trim().toLowerCase();
+                    bookingStep = 4;
+                    updateProgress(4);
+                    setTimeout(function() {
+                        addMsg("Got it! 📧\n\nWhat's your phone number?", "bot");
+                        speak("Got it! What's your phone number?");
+                    }, 500);
+                    break;
+                    
+                case 4:
+                    if (!isValidPhone(text)) {
+                        addMsg("Please enter a valid phone number (at least 10 digits).", "bot");
+                        return;
+                    }
+                    booking.phone = text.trim();
+                    bookingStep = 5;
+                    updateProgress(5);
+                    setTimeout(function() {
+                        addMsg("Perfect! 📱\n\nWhen would you like to schedule?\n\n(Mon-Fri, 9AM-6PM UK time)", "bot");
+                        speak("Perfect! When would you like to schedule?");
+                        showDates();
+                    }, 500);
+                    break;
+                    
+                case 5:
+                    if (!booking.dateDisplay) {
+                        booking.dateDisplay = text;
+                    }
+                    bookingStep = 6;
+                    updateProgress(6);
+                    setTimeout(function() {
+                        addMsg("Great! " + booking.dateDisplay + " it is! 📅\n\nWhat time works best?", "bot");
+                        speak("Great! What time works best for you?");
+                        showTimes();
+                    }, 500);
+                    break;
+                    
+                case 6:
+                    booking.time = text;
+                    bookingStep = 7;
+                    setTimeout(function() {
+                        addMsg("Almost done! 📝\n\nAnything specific you'd like to discuss?\n\n(Type your notes or 'skip' to continue)", "bot");
+                        speak("Almost done! Any notes, or say skip to continue.");
+                        addQuickBtns(["Skip", "New website", "Redesign", "E-commerce", "App idea", "Just exploring"]);
+                    }, 500);
+                    break;
+                    
+                case 7:
+                    booking.notes = msg === "skip" ? "" : text;
+                    booking.ref = generateRef();
+                    bookingStep = 0;
+                    bookingMode = false;
+                    updateProgress(0);
+                    
+                    setTimeout(function() {
+                        addMsg("🎉 Booking Confirmed!\n\nHere's your appointment summary:", "bot");
+                        showSummary();
+                        
+                        setTimeout(function() {
+                            addMsg("We've sent a confirmation to " + booking.email + "\n\nWe'll remind you 24 hours before.\n\nThank you for choosing Genfeel! 💜", "bot");
+                            speak("Booking confirmed! Your reference is " + booking.ref + ". Check your email for confirmation.");
+                            submitBooking();
+                            
+                            setTimeout(function() {
+                                addQuickBtns(["View Services", "Pricing", "Contact", "New Chat"]);
+                            }, 500);
+                        }, 500);
+                    }, 500);
+                    break;
+            }
+        }
+
+    function submitBooking() {
+    console.log("🚀 Starting booking submission...");
+    
+    // 1. Generate booking data for Zapier
+    const bookingData = {
+        reference: booking.ref,
+        service: booking.service,
+        name: booking.name,
+        email: booking.email,
+        phone: booking.phone,
+        date: booking.dateDisplay,
+        time: booking.time,
+        timezone: "UK",
+        notes: booking.notes || "No notes",
+        source: "Genfeel Chatbot",
+        status: "pending",
+        timestamp: new Date().toISOString()
+    };
+
+    console.log("📤 Sending booking to Zapier...", bookingData);
+
+    // 2. Send to Zapier
+    fetch("https://hooks.zapier.com/hooks/catch/26098855/uqos5cs/", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingData)
+    })
+    .then(response => {
+        console.log("✅ Zapier response received");
+        return response;
+    })
+    .catch(error => {
+        console.log("⚠️ Zapier fetch error:", error);
+    })
+    .finally(() => {
+        // 3. Send email via hidden form (works without activation)
+        console.log("📧 Sending confirmation email...");
+        
+        const form = document.createElement('form');
+        form.style.display = 'none';
+        form.method = 'POST';
+        form.action = 'https://formsubmit.co/hello@genfeel.co.uk';
+        
+        // Add all form fields
+        const formData = {
+            _subject: "📅 New Booking: " + booking.ref + " - " + booking.service,
+            reference: booking.ref,
+            service: booking.service,
+            name: booking.name,
+            email: booking.email,
+            phone: booking.phone,
+            date: booking.dateDisplay,
+            time: booking.time + " (UK)",
+            notes: booking.notes || "No notes",
+            source: "Chatbot",
+            _captcha: "false",
+            _replyto: booking.email,
+            _cc: "hello@genfeel.co.uk"
+        };
+        
+        for (const key in formData) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = formData[key];
+            form.appendChild(input);
+        }
+        
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
+        
+        // Clean up
+        setTimeout(() => {
+            if (form.parentNode) {
+                form.parentNode.removeChild(form);
+            }
+        }, 3000);
+        
+        console.log('✅ Email form submitted');
+        
+        // Show success message
+        setTimeout(() => {
+            addMsg(`✅ <strong>Booking Confirmed!</strong><br><br>
+            🔖 <strong>Reference:</strong> ${booking.ref}<br>
+            📅 <strong>Date:</strong> ${booking.dateDisplay}<br>
+            ⏰ <strong>Time:</strong> ${booking.time} (UK)<br>
+            📧 <strong>Confirmation sent to:</strong> ${booking.email}<br><br>
+            <em>You should receive an email confirmation shortly.</em>`, "bot");
+        }, 500);
+    });
+}
+  
+  .catch(error => {
+        console.error("❌ Error sending booking:", error);
+        
+        // Fallback: Try simple form submission
+        const fallbackForm = document.createElement('form');
+        fallbackForm.style.display = 'none';
+        fallbackForm.method = 'POST';
+        fallbackForm.action = 'https://formsubmit.co/hello@genfeel.co.uk';
+        
+        const fields = {
+            _subject: `📅 New Booking: ${booking.ref} - ${booking.service}`,
+            reference: booking.ref,
+            service: booking.service,
+            name: booking.name,
+            email: booking.email,
+            phone: booking.phone,
+            date: booking.dateDisplay,
+            time: `${booking.time} (UK)`,
+            notes: booking.notes || "No notes",
+            _captcha: "false",
+            _replyto: booking.email
+        };
+        
+        for (const key in fields) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = fields[key];
+            fallbackForm.appendChild(input);
+        }
+        
+        document.body.appendChild(fallbackForm);
+        fallbackForm.submit();
+        
+        // Show success message even if there was an error
+        setTimeout(() => {
+            addMsg(`✅ <strong>Booking Submitted!</strong><br><br>
+            🔖 <strong>Reference:</strong> ${booking.ref}<br>
+            📅 <strong>Date:</strong> ${booking.dateDisplay}<br>
+            ⏰ <strong>Time:</strong> ${booking.time} (UK)<br><br>
+            <em>We're processing your booking. You'll receive confirmation soon.</em>`, "bot");
+        }, 500);
+    });
+}
+
+      function speak(text) {
+            if (isMuted) return;
+            if (!window.speechSynthesis) return;
+            
+            window.speechSynthesis.cancel();
+            
+            var clean = text
+                .replace(/\n/g, ". ")
+                .replace(/[✓✅❤️💜👋🎉📅📱💬🌐🟩🟦🟨📦💰🛠️⚙️•📧📞📍⏰🎯💡🎨⚡🤝📋👤💳🛍️📝🔍📊🤖🗣️⭐📈🚀✨]/g, "")
+                .replace(/\s+/g, " ")
+                .trim();
+            
+            var utter = new SpeechSynthesisUtterance(clean.substring(0, 250));
+            
+            var voices = window.speechSynthesis.getVoices();
+            var preferredVoices = ["Google UK English Female", "Google UK English Male", "Microsoft Libby", "Samantha", "Karen", "Daniel"];
+            var selectedVoice = null;
+            
+            for (var i = 0; i < preferredVoices.length; i++) {
+                for (var j = 0; j < voices.length; j++) {
+                    if (voices[j].name.indexOf(preferredVoices[i]) >= 0) {
+                        selectedVoice = voices[j];
+                        break;
+                    }
+                }
+                if (selectedVoice) break;
+            }
+            
+            if (!selectedVoice) {
+                for (var k = 0; k < voices.length; k++) {
+                    if (voices[k].lang.indexOf("en-GB") >= 0 || voices[k].lang.indexOf("en-US") >= 0) {
+                        selectedVoice = voices[k];
+                        break;
+                    }
+                }
+            }
+            
+            if (selectedVoice) utter.voice = selectedVoice;
+            
+            utter.lang = "en-GB";
+            utter.rate = 0.95;
+            utter.pitch = 1.05;
+            utter.volume = 0.9;
+            
+            window.speechSynthesis.speak(utter);
+        }
+
+        if (window.speechSynthesis) {
+            window.speechSynthesis.onvoiceschanged = function() {
+                window.speechSynthesis.getVoices();
+            };
+            window.speechSynthesis.getVoices();
+        }
+
+        function getReply(msg) {
+            var m = msg.toLowerCase();
+
+            // Handle "New Chat" quick button
+            if (m === "new chat") {
+                resetChat();
+                return null;
+            }
+
+            if (m.includes("hello") || m.includes("hi") || m.includes("hey")) {
+                setTimeout(function() { addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]); }, 500);
+                return "Hey there! 👋 Welcome to Genfeel — tech with a heartbeat.\n\nHow can I help you today?";
+            }
+
+            if (m.includes("service") || m === "view services") {
+                setTimeout(function() { addQuickBtns(["Websites", "Mobile Apps", "AI Chatbots", "Pricing"]); }, 500);
+                return "We offer:\n\n🌐 Website Development — from £299\n📱 Mobile Apps — from £499\n💬 Chatbot and Voice Agent AI — from £199\n\nWhich interests you?";
+            }
+
+            if (m.includes("price") || m.includes("cost") || m === "pricing") {
+                setTimeout(function() { addQuickBtns(["Starter £299", "Professional £749", "Business £1499", "Book Consultation"]); }, 500);
+                return "💰 Our Pricing:\n\n🟩 Starter: £299\n🟦 Professional: £749 ⭐\n🟨 Business: £1,499\n\n📱 Apps: from £499\n💬 Chatbots: from £199\n🗣️ Voice Agents: from £249";
+            }
+
+            if (m.includes("website")) {
+                setTimeout(function() { addQuickBtns(["Starter £299", "Professional £749", "Business £1499", "Book Consultation"]); }, 500);
+                return "🌐 Website Packages:\n\n🟩 Starter — £299\n1-3 pages, responsive, hosting\n\n🟦 Professional — £749 ⭐\n5-8 pages, CMS, blog, SEO\n\n🟨 Business — £1,499\nDashboard, payments, portal";
+            }
+
+            if (m.includes("starter")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "Professional Package"]); }, 500);
+                return "🟩 STARTER — £299\n\n✓ 1-3 page website\n✓ Responsive design\n✓ Free domain & hosting (1yr)\n✓ Basic SEO\n✓ Contact form\n✓ Email support\n\nAdd-ons:\n🛍️ Online store: +£149\n📅 Booking: +£99";
+            }
+
+            if (m.includes("professional")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "Business Package"]); }, 500);
+                return "🟦 PROFESSIONAL — £749 ⭐\n\nEverything in Starter, plus:\n✓ 5-8 custom pages\n✓ Animations\n✓ CMS for easy editing\n✓ Blog section\n✓ Local SEO\n✓ Google Analytics\n✓ 1-hour strategy call\n✓ 2 revisions\n\nAdd-ons:\n📱 Mobile app: +£499\n💬 Chatbot: +£199";
+            }
+
+            if (m.includes("business")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "Compare Packages"]); }, 500);
+                return "🟨 BUSINESS — £1,499\n\nEverything in Professional, plus:\n✓ Backend dashboard\n✓ Payment processing\n✓ Client portal\n✓ Advanced SEO\n✓ 3 months health checks\n✓ Priority support\n\nAdd-ons:\n📱 Custom app: +£699\n🤖 AI chatbot: +£349";
+            }
+
+            if (m.includes("app") || m.includes("mobile")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
+                return "📱 Mobile Apps\n\n✓ iOS & Android\n✓ Native performance\n✓ Push notifications\n✓ App store optimization\n\nPricing: from £499";
+            }
+
+            if (m.includes("chatbot") || m.includes("ai") || m.includes("voice")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
+                return "💬 Chatbot and Voice Agent AI\n\n🤖 Chatbots — from £199\n🗣️ Voice Agents — from £249\n\n✓ Natural language\n✓ Brand voice training\n✓ 24/7 availability\n✓ Analytics included";
+            }
+
+            if (m.includes("contact") || m.includes("email") || m.includes("phone")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "View Services"]); }, 500);
+                return "📞 Contact Us\n\n📧 hello@genfeel.co.uk\n📞 +44 7383 027802\n📍 London, UK\n⏰ Mon-Fri, 9AM-6PM\n\nOr book a consultation right now!";
+            }
+
+            if (m.includes("book") || m.includes("appointment") || m.includes("consultation") || m.includes("schedule")) {
+                startBooking();
+                return null;
+            }
+
+            if (m.includes("about") || m.includes("genfeel")) {
+                setTimeout(function() { addQuickBtns(["View Services", "Book Consultation"]); }, 500);
+                return "Genfeel creates digital experiences that feel human.\n\n✅ 50+ Projects\n✅ 30+ Happy Clients\n✅ 98% Satisfaction\n\nOur motto: Tech with a heartbeat 💜";
+            }
+
+            if (m.includes("maintenance") || m.includes("support")) {
+                setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
+                return "⚙️ Maintenance Plans\n\n⚡ Essential: £49/mo\n📈 Growth: £99/mo\n🚀 Enterprise: £199/mo\n\nAll include hosting, backups & security!";
+            }
+
+            if (m.includes("thank") || m.includes("bye") || m.includes("goodbye")) {
+                setTimeout(function() {
+                    addMsg("💬 Chat will reset in 5 seconds...", "system");
+                    setTimeout(function() {
+                        resetChat();
+                    }, 5000);
+                }, 2000);
+                return "You're welcome! 💜\n\n📧 hello@genfeel.co.uk\n📞 +44 7383 027802\n\nHave a great day! 👋";
+            }
+
+            setTimeout(function() { addQuickBtns(["Services", "Pricing", "Book Consultation", "Contact"]); }, 500);
+            return "Thanks for your message! I can help with:\n• Services & packages\n• Pricing\n• Booking consultations\n\nWhat would you like to know?";
+        }
+
+        function sendMsg() {
+            var text = input.value.trim();
+            if (!text) return;
+
+            addMsg(text, "user");
+            input.value = "";
+            clearExtras();
+
+            if (bookingMode) {
+                handleBooking(text);
+                return;
+            }
+
+            setTimeout(function() {
+                var reply = getReply(text);
+                if (reply) {
+                    addMsg(reply, "bot");
+                    speak(reply);
+                }
+            }, 500);
+        }
+
+        sendBtn.onclick = sendMsg;
+        input.onkeypress = function(e) {
+            if (e.key === "Enter") sendMsg();
+        };
+
+        if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+            var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SR();
+            recognition.lang = "en-GB";
+
+            recognition.onresult = function(e) {
+                input.value = e.results[0][0].transcript;
+                sendMsg();
+            };
+
+            recognition.onend = function() {
+                isListening = false;
+                voiceBtn.textContent = "🎤";
+                voiceBtn.classList.remove("gc-listening");
+            };
+        }
+
+        voiceBtn.onclick = function() {
+            if (!recognition) {
+                alert("Voice not supported. Use Chrome.");
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+                isListening = true;
+                voiceBtn.textContent = "⏹️";
+                voiceBtn.classList.add("gc-listening");
+            }
+        };
+
+        // Initial welcome message
+        setTimeout(function() {
+            addMsg("Hi! I'm Genfeel's assistant 👋\n\nHow can I help you today?", "bot");
+            setTimeout(function() {
+                addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
+            }, 400);
+        }, 600);
+    })();
+    </script>
+
+    <style>
+        #gc-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        #gc-bubble {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            color: white;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 24px rgba(99, 102, 241, 0.5);
+        }
+
+        #gc-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        #gc-window {
+            display: none;
+            width: 380px;
+            background: #1a1a24;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+        }
+
+        #gc-window.gc-open {
+            display: block;
+        }
+
+        #gc-header {
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            padding: 16px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #gc-header-title {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        #gc-header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        #gc-reset, #gc-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        #gc-reset:hover, #gc-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        #gc-progress {
+            display: none;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+        }
+
+        #gc-progress-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .gc-progress-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .gc-progress-dot.gc-active {
+            background: #6366f1;
+            width: 24px;
+            border-radius: 5px;
+        }
+
+        .gc-progress-dot.gc-done {
+            background: #4ade80;
+        }
+
+        #gc-messages {
+            height: 320px;
+            overflow-y: auto;
+            padding: 16px;
+            background: #0a0a0f;
+        }
+
+        .gc-msg {
+            margin: 12px 0;
+            padding: 14px 18px;
+            border-radius: 16px;
+            max-width: 85%;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .gc-msg-user {
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .gc-msg-bot {
+            background: #1e1e2d;
+            color: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        .gc-msg-system {
+            background: rgba(99, 102, 241, 0.1);
+            color: #a5b4fc;
+            text-align: center;
+            max-width: 100%;
+            font-size: 0.8rem;
+            border: 1px dashed rgba(99, 102, 241, 0.3);
+        }
+
+        #gc-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+            background: #1a1a24;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #gc-input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: #0a0a0f;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        #gc-input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        #gc-send, #gc-voice, #gc-mute {
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #gc-send {
+            background: #6366f1;
+            color: white;
+        }
+
+        #gc-voice {
+            background: #252532;
+            color: white;
+            font-size: 18px;
+        }
+
+        #gc-voice.gc-listening {
+            background: #ec4899;
+        }
+
+        #gc-mute {
+            background: #252532;
+            color: white;
+            font-size: 16px;
+        }
+
+        #gc-mute.gc-muted {
+            background: #ef4444;
+        }
+
+        .gc-quick-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .gc-quick-btn {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: #a5b4fc;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .gc-quick-btn:hover {
+            background: rgba(99, 102, 241, 0.3);
+            color: white;
+        }
+
+        .gc-service-card {
+            background: #1e1e2d;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+
+        .gc-service-card:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .gc-service-card-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .gc-service-card-price {
+            color: #a5b4fc;
+            font-size: 0.85rem;
+        }
+
+        .gc-date-btn {
+            background: #1e1e2d;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin: 6px 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .gc-date-btn:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .gc-time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .gc-time-btn {
+            background: #1e1e2d;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .gc-time-btn:hover {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .gc-time-btn.gc-unavailable {
+            opacity: 0.4;
+            cursor: not-allowed;
+            text-decoration: line-through;
+        }
+
+        .gc-summary {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 10px 0;
+        }
+
+        .gc-summary-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .gc-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+
+        .gc-summary-label {
+            color: #a1a1aa;
+        }
+
+        .gc-summary-value {
+            color: white;
+            font-weight: 500;
+        }
+
+        .gc-ref-number {
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            color: #4ade80;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .gc-cancel-btn {
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #ef4444;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .gc-cancel-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+    </style>
+
+    <script>
+        // Hide loading screen when React loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loading-screen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
