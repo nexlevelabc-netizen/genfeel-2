@@ -1,21 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Genfeel - Digital Made Human | Tech with a Heartbeat</title>
-    
-    <!-- Favicons (temporarily disabled for local testing) -->
-    <!-- 
+    <!-- ========== PASTE FAVICON CODE HERE ========== -->
     <link rel="shortcut icon" href="/images/favicon.ico?v=3" type="image/x-icon">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=3">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=3">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=3">
-    <link rel="icon" sizes="192x192" href="/images/android-chrome-192x192.png?v=3">
+    <link rel="icon" sizes="192x192" href="/images/android-chrome-192x192.png?v=3">f
     <link rel="icon" sizes="512x512" href="/images/android-chrome-512x512.png?v=3">
-    <link rel="manifest" href="/images/site.webmanifest?v=3">
-    -->
-    
+        <!-- ========== END FAVICON ========== -->
     <meta name="description" content="We create digital experiences that people enjoy using. Websites, mobile apps, Chatbot and Voice Agent AI that feel natural and human.">
     
     <!-- Fonts -->
@@ -27,10 +24,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- React & Dependencies -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
     <style>
         /* ===== COMPLETE CSS - ALL STYLES ===== */
         :root {
@@ -1087,14 +1080,10 @@
                 gap: var(--spacing-sm);
             }
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
+    <!-- Loading Screen (ADD THIS) -->
     <div id="loading-screen" style="
         position: fixed;
         top: 0;
@@ -1123,767 +1112,27 @@
         ">Loading Genfeel...</p>
     </div>
 
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
     <div id="root"></div>
-    
-    <!-- Load React App -->
+<!-- ========== ADD THESE 2 LINES ========== -->
+<!-- React Router (ADD BEFORE genfeel-app.js) -->
+
+<!-- ========== END ========== -->
+<!-- ========== ADD THESE 3 LINES ========== -->
+    <!-- React Production -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="genfeel-app.js"></script>
+    <!-- ========== END ========== -->
+<!-- Hide loading screen after React loads (ADD THIS) -->
     
-    <!-- Chatbot Widget -->
-    <div id="gc-widget">
-        <div id="gc-window">
-            <div id="gc-header">
-                <span id="gc-header-title">💬 Genfeel Assistant</span>
-                <div id="gc-header-buttons">
-                    <button id="gc-reset" title="New Chat">🔄</button>
-                    <button id="gc-close" title="Close">✕</button>
-                </div>
-            </div>
-            <div id="gc-progress">
-                <div id="gc-progress-bar">
-                    <div class="gc-progress-dot" data-step="1"></div>
-                    <div class="gc-progress-dot" data-step="2"></div>
-                    <div class="gc-progress-dot" data-step="3"></div>
-                    <div class="gc-progress-dot" data-step="4"></div>
-                    <div class="gc-progress-dot" data-step="5"></div>
-                    <div class="gc-progress-dot" data-step="6"></div>
-                </div>
-            </div>
-            <div id="gc-messages"></div>
-            <div id="gc-input-area">
-                <input type="text" id="gc-input" placeholder="Type your message...">
-                <button id="gc-send">Send</button>
-                <button id="gc-voice">🎤</button>
-                <button id="gc-mute" class="gc-muted">🔇</button>
-            </div>
-        </div>
-        <button id="gc-bubble">💬</button>
-    </div>
-
-    <script>
-    (function() {
-        // Chatbot variables
-        var bubble = document.getElementById("gc-bubble");
-        var chatWindow = document.getElementById("gc-window");
-        var closeBtn = document.getElementById("gc-close");
-        var resetBtn = document.getElementById("gc-reset");
-        var messages = document.getElementById("gc-messages");
-        var input = document.getElementById("gc-input");
-        var sendBtn = document.getElementById("gc-send");
-        var voiceBtn = document.getElementById("gc-voice");
-        var muteBtn = document.getElementById("gc-mute");
-        var progress = document.getElementById("gc-progress");
-        
-        var isMuted = true;
-        var isListening = false;
-        var recognition = null;
-        
-        var bookingMode = false;
-        var bookingStep = 0;
-        var booking = {
-            service: "",
-            name: "",
-            email: "",
-            phone: "",
-            date: "",
-            dateDisplay: "",
-            time: "",
-            notes: "",
-            ref: ""
-        };
-
-        var services = [
-            { name: "Website - Starter", price: "£299", desc: "1-3 pages, responsive design" },
-            { name: "Website - Professional", price: "£749", desc: "5-8 pages, CMS, SEO", popular: true },
-            { name: "Website - Business", price: "£1,499", desc: "Dashboard, payments, portal" },
-            { name: "Mobile App", price: "From £499", desc: "iOS & Android development" },
-            { name: "AI Chatbot", price: "From £199", desc: "Smart chatbot for your site" },
-            { name: "Voice Agent", price: "From £249", desc: "Voice-powered assistant" },
-            { name: "General Consultation", price: "Free", desc: "Discuss your project needs" }
-        ];
-
-        var timeSlots = [
-            { time: "9:00 AM", available: true },
-            { time: "10:00 AM", available: true },
-            { time: "11:00 AM", available: true },
-            { time: "12:00 PM", available: false },
-            { time: "2:00 PM", available: true },
-            { time: "3:00 PM", available: true },
-            { time: "4:00 PM", available: true },
-            { time: "5:00 PM", available: true }
-        ];
-
-        // Open chat
-        bubble.onclick = function() {
-            chatWindow.classList.add("gc-open");
-            bubble.style.display = "none";
-        };
-
-        // Close chat and reset
-        closeBtn.onclick = function() {
-            chatWindow.classList.remove("gc-open");
-            bubble.style.display = "flex";
-            
-            setTimeout(function() {
-                resetChat();
-            }, 300);
-        };
-
-        // Reset chat button
-        resetBtn.onclick = function() {
-            resetChat();
-        };
-
-        // Mute toggle
-        muteBtn.onclick = function() {
-            isMuted = !isMuted;
-            if (isMuted) {
-                muteBtn.textContent = "🔇";
-                muteBtn.classList.add("gc-muted");
-                if (window.speechSynthesis) window.speechSynthesis.cancel();
-            } else {
-                muteBtn.textContent = "🔊";
-                muteBtn.classList.remove("gc-muted");
-            }
-        };
-
-        // Reset chat function
-        function resetChat() {
-            messages.innerHTML = "";
-            bookingMode = false;
-            bookingStep = 0;
-            booking = { service: "", name: "", email: "", phone: "", date: "", dateDisplay: "", time: "", notes: "", ref: "" };
-            updateProgress(0);
-            clearExtras();
-            
-            addMsg("Hi! I'm Genfeel's assistant 👋\n\nHow can I help you today?", "bot");
-            setTimeout(function() {
-                addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
-            }, 400);
-        }
-
-        function addMsg(text, type) {
-            var div = document.createElement("div");
-            div.className = "gc-msg gc-msg-" + type;
-            div.innerHTML = text.replace(/\n/g, "<br>");
-            messages.appendChild(div);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function addQuickBtns(options) {
-            var container = document.createElement("div");
-            container.className = "gc-quick-btns";
-            options.forEach(function(opt) {
-                var btn = document.createElement("button");
-                btn.className = "gc-quick-btn";
-                btn.textContent = opt;
-                btn.onclick = function() {
-                    input.value = opt;
-                    sendMsg();
-                    container.remove();
-                };
-                container.appendChild(btn);
-            });
-            messages.appendChild(container);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function addCancelBtn() {
-            var btn = document.createElement("button");
-            btn.className = "gc-cancel-btn";
-            btn.textContent = "✕ Cancel Booking";
-            btn.onclick = function() {
-                cancelBooking();
-            };
-            messages.appendChild(btn);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function showServices() {
-            services.forEach(function(s) {
-                var card = document.createElement("div");
-                card.className = "gc-service-card";
-                card.innerHTML = '<div class="gc-service-card-title">' + s.name + (s.popular ? ' ⭐' : '') + '</div><div class="gc-service-card-price">' + s.price + ' • ' + s.desc + '</div>';
-                card.onclick = function() {
-                    input.value = s.name;
-                    sendMsg();
-                };
-                messages.appendChild(card);
-            });
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function showDates() {
-            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            var today = new Date();
-            var added = 0;
-            var current = new Date(today);
-            
-            while (added < 5) {
-                current.setDate(current.getDate() + 1);
-                var dayOfWeek = current.getDay();
-                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
-                
-                var dayName = days[dayOfWeek];
-                var dateStr = current.getDate() + " " + months[current.getMonth()];
-                var fullDate = dayName + ", " + dateStr;
-                
-                (function(fd) {
-                    var btn = document.createElement("button");
-                    btn.className = "gc-date-btn";
-                    btn.innerHTML = '<span>' + dayName + '</span><span>' + dateStr + '</span>';
-                    btn.onclick = function() {
-                        booking.dateDisplay = fd;
-                        input.value = fd;
-                        sendMsg();
-                    };
-                    messages.appendChild(btn);
-                })(fullDate);
-                
-                added++;
-            }
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function showTimes() {
-            var grid = document.createElement("div");
-            grid.className = "gc-time-grid";
-            
-            timeSlots.forEach(function(slot) {
-                var btn = document.createElement("button");
-                btn.className = "gc-time-btn" + (slot.available ? "" : " gc-unavailable");
-                btn.textContent = slot.time;
-                
-                if (slot.available) {
-                    btn.onclick = function() {
-                        input.value = slot.time;
-                        sendMsg();
-                    };
-                }
-                grid.appendChild(btn);
-            });
-            
-            messages.appendChild(grid);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function showSummary() {
-            var summary = document.createElement("div");
-            summary.className = "gc-summary";
-            summary.innerHTML = '<div class="gc-summary-title">📋 Booking Summary</div>' +
-                '<div class="gc-summary-row"><span class="gc-summary-label">Service</span><span class="gc-summary-value">' + booking.service + '</span></div>' +
-                '<div class="gc-summary-row"><span class="gc-summary-label">Name</span><span class="gc-summary-value">' + booking.name + '</span></div>' +
-                '<div class="gc-summary-row"><span class="gc-summary-label">Email</span><span class="gc-summary-value">' + booking.email + '</span></div>' +
-                '<div class="gc-summary-row"><span class="gc-summary-label">Phone</span><span class="gc-summary-value">' + booking.phone + '</span></div>' +
-                '<div class="gc-summary-row"><span class="gc-summary-label">Date</span><span class="gc-summary-value">' + booking.dateDisplay + '</span></div>' +
-                '<div class="gc-summary-row"><span class="gc-summary-label">Time</span><span class="gc-summary-value">' + booking.time + ' (UK)</span></div>' +
-                (booking.notes && booking.notes.toLowerCase() !== "skip" ? '<div class="gc-summary-row"><span class="gc-summary-label">Notes</span><span class="gc-summary-value">' + booking.notes + '</span></div>' : '') +
-                '<div class="gc-ref-number">Reference: ' + booking.ref + '</div>';
-            
-            messages.appendChild(summary);
-            messages.scrollTop = messages.scrollHeight;
-        }
-
-        function updateProgress(step) {
-            progress.style.display = step > 0 ? "block" : "none";
-            var dots = document.querySelectorAll(".gc-progress-dot");
-            dots.forEach(function(dot, i) {
-                dot.classList.remove("gc-active", "gc-done");
-                if (i + 1 < step) {
-                    dot.classList.add("gc-done");
-                } else if (i + 1 === step) {
-                    dot.classList.add("gc-active");
-                }
-            });
-        }
-
-        function generateRef() {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var ref = "GF-";
-            for (var i = 0; i < 6; i++) {
-                ref += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return ref;
-        }
-
-        function isValidEmail(email) {
-            return email.indexOf("@") > 0 && email.indexOf(".") > 0;
-        }
-
-        function isValidPhone(phone) {
-            return phone.replace(/\D/g, "").length >= 10;
-        }
-
-        function clearExtras() {
-            var items = document.querySelectorAll(".gc-quick-btns, .gc-service-card, .gc-date-btn, .gc-time-grid, .gc-cancel-btn");
-            items.forEach(function(el) { el.remove(); });
-        }
-
-        function startBooking() {
-            bookingMode = true;
-            bookingStep = 1;
-            booking = { service: "", name: "", email: "", phone: "", date: "", dateDisplay: "", time: "", notes: "", ref: "" };
-            updateProgress(1);
-            
-            setTimeout(function() {
-                addMsg("Great! Let's book your consultation. 📅\n\nFirst, which service are you interested in?", "bot");
-                speak("Great! Let's book your consultation. Which service are you interested in?");
-                showServices();
-                addCancelBtn();
-            }, 500);
-        }
-
-        function cancelBooking() {
-            bookingMode = false;
-            bookingStep = 0;
-            updateProgress(0);
-            clearExtras();
-            addMsg("Booking cancelled. No worries! 👍\n\nIs there anything else I can help with?", "bot");
-            addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
-        }
-
-        function handleBooking(text) {
-            var msg = text.toLowerCase().trim();
-            
-            switch(bookingStep) {
-                case 1:
-                    booking.service = text;
-                    bookingStep = 2;
-                    updateProgress(2);
-                    setTimeout(function() {
-                        addMsg("Excellent choice! ✨\n\nWhat's your full name?", "bot");
-                        speak("Excellent choice! What's your full name?");
-                    }, 500);
-                    break;
-                    
-                case 2:
-                    if (text.trim().length < 2) {
-                        addMsg("Please enter your full name (at least 2 characters).", "bot");
-                        return;
-                    }
-                    booking.name = text.trim();
-                    bookingStep = 3;
-                    updateProgress(3);
-                    setTimeout(function() {
-                        addMsg("Nice to meet you, " + booking.name.split(" ")[0] + "! 👋\n\nWhat's your email address?", "bot");
-                        speak("Nice to meet you! What's your email address?");
-                    }, 500);
-                    break;
-                    
-                case 3:
-                    if (!isValidEmail(text)) {
-                        addMsg("Please enter a valid email address (e.g., you@example.com).", "bot");
-                        return;
-                    }
-                    booking.email = text.trim().toLowerCase();
-                    bookingStep = 4;
-                    updateProgress(4);
-                    setTimeout(function() {
-                        addMsg("Got it! 📧\n\nWhat's your phone number?", "bot");
-                        speak("Got it! What's your phone number?");
-                    }, 500);
-                    break;
-                    
-                case 4:
-                    if (!isValidPhone(text)) {
-                        addMsg("Please enter a valid phone number (at least 10 digits).", "bot");
-                        return;
-                    }
-                    booking.phone = text.trim();
-                    bookingStep = 5;
-                    updateProgress(5);
-                    setTimeout(function() {
-                        addMsg("Perfect! 📱\n\nWhen would you like to schedule?\n\n(Mon-Fri, 9AM-6PM UK time)", "bot");
-                        speak("Perfect! When would you like to schedule?");
-                        showDates();
-                    }, 500);
-                    break;
-                    
-                case 5:
-                    if (!booking.dateDisplay) {
-                        booking.dateDisplay = text;
-                    }
-                    bookingStep = 6;
-                    updateProgress(6);
-                    setTimeout(function() {
-                        addMsg("Great! " + booking.dateDisplay + " it is! 📅\n\nWhat time works best?", "bot");
-                        speak("Great! What time works best for you?");
-                        showTimes();
-                    }, 500);
-                    break;
-                    
-                case 6:
-                    booking.time = text;
-                    bookingStep = 7;
-                    setTimeout(function() {
-                        addMsg("Almost done! 📝\n\nAnything specific you'd like to discuss?\n\n(Type your notes or 'skip' to continue)", "bot");
-                        speak("Almost done! Any notes, or say skip to continue.");
-                        addQuickBtns(["Skip", "New website", "Redesign", "E-commerce", "App idea", "Just exploring"]);
-                    }, 500);
-                    break;
-                    
-                case 7:
-                    booking.notes = msg === "skip" ? "" : text;
-                    booking.ref = generateRef();
-                    bookingStep = 0;
-                    bookingMode = false;
-                    updateProgress(0);
-                    
-                    setTimeout(function() {
-                        addMsg("🎉 Booking Confirmed!\n\nHere's your appointment summary:", "bot");
-                        showSummary();
-                        
-                        setTimeout(function() {
-                            addMsg("We've sent a confirmation to " + booking.email + "\n\nWe'll remind you 24 hours before.\n\nThank you for choosing Genfeel! 💜", "bot");
-                            speak("Booking confirmed! Your reference is " + booking.ref + ". Check your email for confirmation.");
-                            submitBooking();
-                            
-                            setTimeout(function() {
-                                addQuickBtns(["View Services", "Pricing", "Contact", "New Chat"]);
-                            }, 500);
-                        }, 500);
-                    }, 500);
-                    break;
-            }
-        }
-
-         function submitBooking() {
-    console.log("🚀 Starting booking submission...");
-    
-    // Make sure we have a reference
-    if (!booking.ref) {
-        booking.ref = generateRef();
-    }
-    
-    // 1. Send to Zapier (for your records)
-    const zapierData = {
-        reference: booking.ref,
-        service: booking.service,
-        name: booking.name,
-        email: booking.email,
-        phone: booking.phone,
-        date: booking.dateDisplay,
-        time: booking.time,
-        timezone: "UK",
-        notes: booking.notes || "No notes",
-        source: "Genfeel Chatbot"
-    };
-    
-    fetch("https://hooks.zapier.com/hooks/catch/26098855/uqos5cs/", {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(zapierData)
-    });
-
-    // 2. Send ACTUAL EMAILS using FormSubmit WITHOUT activation
-    // This is the key fix - we'll use a different approach
-    
-    // Create a hidden iframe to handle the form submission
-    const iframe = document.createElement('iframe');
-    iframe.name = 'emailFrame';
-    iframe.style.cssText = 'position:absolute;width:1px;height:1px;border:none;opacity:0;';
-    document.body.appendChild(iframe);
-    
-    // Send email to CUSTOMER (from hello@genfeel.co.uk)
-    const customerForm = document.createElement('form');
-    customerForm.action = 'https://formsubmit.co/' + encodeURIComponent(booking.email);
-    customerForm.method = 'POST';
-    customerForm.target = 'emailFrame';
-    customerForm.style.display = 'none';
-    
-    const customerData = {
-        _subject: `✅ Genfeel Booking Confirmation: ${booking.ref}`,
-        _template: 'table',
-        name: booking.name,
-        service: booking.service,
-        date: booking.dateDisplay,
-        time: booking.time + ' (UK)',
-        reference: booking.ref,
-        _replyto: 'hello@genfeel.co.uk',
-        _autoresponse: 'yes',
-        _autoresponse_message: `Hi ${booking.name.split(' ')[0]}, thank you for booking with Genfeel! Your ${booking.service} appointment is confirmed for ${booking.dateDisplay} at ${booking.time} (UK time). We will send a reminder 24 hours before.`
-    };
-    
-    for (const key in customerData) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = customerData[key];
-        customerForm.appendChild(input);
-    }
-    
-    // Send email to YOU (notification)
-    const yourForm = document.createElement('form');
-    yourForm.action = 'https://formsubmit.co/hello@genfeel.co.uk';
-    yourForm.method = 'POST';
-    yourForm.target = 'emailFrame';
-    yourForm.style.display = 'none';
-    
-    const yourData = {
-        _subject: `📅 New Chatbot Booking: ${booking.ref}`,
-        name: booking.name,
-        email: booking.email,
-        phone: booking.phone,
-        service: booking.service,
-        date: booking.dateDisplay,
-        time: booking.time,
-        reference: booking.ref,
-        notes: booking.notes || 'No notes',
-        _replyto: booking.email,
-        _captcha: 'false'
-    };
-    
-    for (const key in yourData) {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = yourData[key];
-        yourForm.appendChild(input);
-    }
-    
-    // Submit both forms
-    document.body.appendChild(customerForm);
-    document.body.appendChild(yourForm);
-    
-    // Submit customer form first, then yours
-    customerForm.submit();
-    
-    setTimeout(() => {
-        yourForm.submit();
-        
-        // Clean up after submission
-        setTimeout(() => {
-            document.body.removeChild(customerForm);
-            document.body.removeChild(yourForm);
-            document.body.removeChild(iframe);
-        }, 3000);
-    }, 500);
-    
-    // 3. Show success message in chatbot
-    setTimeout(() => {
-        addMsg(`✅ <strong>Booking Confirmed Successfully!</strong><br><br>
-        🔖 <strong>Reference:</strong> ${booking.ref}<br>
-        📅 <strong>Date:</strong> ${booking.dateDisplay}<br>
-        ⏰ <strong>Time:</strong> ${booking.time} (UK)<br>
-        📧 <strong>Confirmation email sent to:</strong> ${booking.email}<br><br>
-        <em>Check your inbox for confirmation from hello@genfeel.co.uk</em>`, "bot");
-        
-        // Also speak the confirmation
-        speak(`Booking confirmed! Check your email for details. Your reference is ${booking.ref}.`);
-    }, 1000);
-}
-
-      function speak(text) {
-            if (isMuted) return;
-            if (!window.speechSynthesis) return;
-            
-            window.speechSynthesis.cancel();
-            
-            var clean = text
-                .replace(/\n/g, ". ")
-                .replace(/[✓✅❤️💜👋🎉📅📱💬🌐🟩🟦🟨📦💰🛠️⚙️•📧📞📍⏰🎯💡🎨⚡🤝📋👤💳🛍️📝🔍📊🤖🗣️⭐📈🚀✨]/g, "")
-                .replace(/\s+/g, " ")
-                .trim();
-            
-            var utter = new SpeechSynthesisUtterance(clean.substring(0, 250));
-            
-            var voices = window.speechSynthesis.getVoices();
-            var preferredVoices = ["Google UK English Female", "Google UK English Male", "Microsoft Libby", "Samantha", "Karen", "Daniel"];
-            var selectedVoice = null;
-            
-            for (var i = 0; i < preferredVoices.length; i++) {
-                for (var j = 0; j < voices.length; j++) {
-                    if (voices[j].name.indexOf(preferredVoices[i]) >= 0) {
-                        selectedVoice = voices[j];
-                        break;
-                    }
-                }
-                if (selectedVoice) break;
-            }
-            
-            if (!selectedVoice) {
-                for (var k = 0; k < voices.length; k++) {
-                    if (voices[k].lang.indexOf("en-GB") >= 0 || voices[k].lang.indexOf("en-US") >= 0) {
-                        selectedVoice = voices[k];
-                        break;
-                    }
-                }
-            }
-            
-            if (selectedVoice) utter.voice = selectedVoice;
-            
-            utter.lang = "en-GB";
-            utter.rate = 0.95;
-            utter.pitch = 1.05;
-            utter.volume = 0.9;
-            
-            window.speechSynthesis.speak(utter);
-        }
-
-        if (window.speechSynthesis) {
-            window.speechSynthesis.onvoiceschanged = function() {
-                window.speechSynthesis.getVoices();
-            };
-            window.speechSynthesis.getVoices();
-        }
-
-        function getReply(msg) {
-            var m = msg.toLowerCase();
-
-            // Handle "New Chat" quick button
-            if (m === "new chat") {
-                resetChat();
-                return null;
-            }
-
-            if (m.includes("hello") || m.includes("hi") || m.includes("hey")) {
-                setTimeout(function() { addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]); }, 500);
-                return "Hey there! 👋 Welcome to Genfeel — tech with a heartbeat.\n\nHow can I help you today?";
-            }
-
-            if (m.includes("service") || m === "view services") {
-                setTimeout(function() { addQuickBtns(["Websites", "Mobile Apps", "AI Chatbots", "Pricing"]); }, 500);
-                return "We offer:\n\n🌐 Website Development — from £299\n📱 Mobile Apps — from £499\n💬 Chatbot and Voice Agent AI — from £199\n\nWhich interests you?";
-            }
-
-            if (m.includes("price") || m.includes("cost") || m === "pricing") {
-                setTimeout(function() { addQuickBtns(["Starter £299", "Professional £749", "Business £1499", "Book Consultation"]); }, 500);
-                return "💰 Our Pricing:\n\n🟩 Starter: £299\n🟦 Professional: £749 ⭐\n🟨 Business: £1,499\n\n📱 Apps: from £499\n💬 Chatbots: from £199\n🗣️ Voice Agents: from £249";
-            }
-
-            if (m.includes("website")) {
-                setTimeout(function() { addQuickBtns(["Starter £299", "Professional £749", "Business £1499", "Book Consultation"]); }, 500);
-                return "🌐 Website Packages:\n\n🟩 Starter — £299\n1-3 pages, responsive, hosting\n\n🟦 Professional — £749 ⭐\n5-8 pages, CMS, blog, SEO\n\n🟨 Business — £1,499\nDashboard, payments, portal";
-            }
-
-            if (m.includes("starter")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "Professional Package"]); }, 500);
-                return "🟩 STARTER — £299\n\n✓ 1-3 page website\n✓ Responsive design\n✓ Free domain & hosting (1yr)\n✓ Basic SEO\n✓ Contact form\n✓ Email support\n\nAdd-ons:\n🛍️ Online store: +£149\n📅 Booking: +£99";
-            }
-
-            if (m.includes("professional")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "Business Package"]); }, 500);
-                return "🟦 PROFESSIONAL — £749 ⭐\n\nEverything in Starter, plus:\n✓ 5-8 custom pages\n✓ Animations\n✓ CMS for easy editing\n✓ Blog section\n✓ Local SEO\n✓ Google Analytics\n✓ 1-hour strategy call\n✓ 2 revisions\n\nAdd-ons:\n📱 Mobile app: +£499\n💬 Chatbot: +£199";
-            }
-
-            if (m.includes("business")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "Compare Packages"]); }, 500);
-                return "🟨 BUSINESS — £1,499\n\nEverything in Professional, plus:\n✓ Backend dashboard\n✓ Payment processing\n✓ Client portal\n✓ Advanced SEO\n✓ 3 months health checks\n✓ Priority support\n\nAdd-ons:\n📱 Custom app: +£699\n🤖 AI chatbot: +£349";
-            }
-
-            if (m.includes("app") || m.includes("mobile")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
-                return "📱 Mobile Apps\n\n✓ iOS & Android\n✓ Native performance\n✓ Push notifications\n✓ App store optimization\n\nPricing: from £499";
-            }
-
-            if (m.includes("chatbot") || m.includes("ai") || m.includes("voice")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
-                return "💬 Chatbot and Voice Agent AI\n\n🤖 Chatbots — from £199\n🗣️ Voice Agents — from £249\n\n✓ Natural language\n✓ Brand voice training\n✓ 24/7 availability\n✓ Analytics included";
-            }
-
-            if (m.includes("contact") || m.includes("email") || m.includes("phone")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "View Services"]); }, 500);
-                return "📞 Contact Us\n\n📧 hello@genfeel.co.uk\n📞 +44 7383 027802\n📍 London, UK\n⏰ Mon-Fri, 9AM-6PM\n\nOr book a consultation right now!";
-            }
-
-            if (m.includes("book") || m.includes("appointment") || m.includes("consultation") || m.includes("schedule")) {
-                startBooking();
-                return null;
-            }
-
-            if (m.includes("about") || m.includes("genfeel")) {
-                setTimeout(function() { addQuickBtns(["View Services", "Book Consultation"]); }, 500);
-                return "Genfeel creates digital experiences that feel human.\n\n✅ 50+ Projects\n✅ 30+ Happy Clients\n✅ 98% Satisfaction\n\nOur motto: Tech with a heartbeat 💜";
-            }
-
-            if (m.includes("maintenance") || m.includes("support")) {
-                setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
-                return "⚙️ Maintenance Plans\n\n⚡ Essential: £49/mo\n📈 Growth: £99/mo\n🚀 Enterprise: £199/mo\n\nAll include hosting, backups & security!";
-            }
-
-            if (m.includes("thank") || m.includes("bye") || m.includes("goodbye")) {
-                setTimeout(function() {
-                    addMsg("💬 Chat will reset in 5 seconds...", "system");
-                    setTimeout(function() {
-                        resetChat();
-                    }, 5000);
-                }, 2000);
-                return "You're welcome! 💜\n\n📧 hello@genfeel.co.uk\n📞 +44 7383 027802\n\nHave a great day! 👋";
-            }
-
-            setTimeout(function() { addQuickBtns(["Services", "Pricing", "Book Consultation", "Contact"]); }, 500);
-            return "Thanks for your message! I can help with:\n• Services & packages\n• Pricing\n• Booking consultations\n\nWhat would you like to know?";
-        }
-
-        function sendMsg() {
-            var text = input.value.trim();
-            if (!text) return;
-
-            addMsg(text, "user");
-            input.value = "";
-            clearExtras();
-
-            if (bookingMode) {
-                handleBooking(text);
-                return;
-            }
-
-            setTimeout(function() {
-                var reply = getReply(text);
-                if (reply) {
-                    addMsg(reply, "bot");
-                    speak(reply);
-                }
-            }, 500);
-        }
-
-        sendBtn.onclick = sendMsg;
-        input.onkeypress = function(e) {
-            if (e.key === "Enter") sendMsg();
-        };
-
-        if (window.SpeechRecognition || window.webkitSpeechRecognition) {
-            var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SR();
-            recognition.lang = "en-GB";
-
-            recognition.onresult = function(e) {
-                input.value = e.results[0][0].transcript;
-                sendMsg();
-            };
-
-            recognition.onend = function() {
-                isListening = false;
-                voiceBtn.textContent = "🎤";
-                voiceBtn.classList.remove("gc-listening");
-            };
-        }
-
-        voiceBtn.onclick = function() {
-            if (!recognition) {
-                alert("Voice not supported. Use Chrome.");
-                return;
-            }
-            if (isListening) {
-                recognition.stop();
-            } else {
-                recognition.start();
-                isListening = true;
-                voiceBtn.textContent = "⏹️";
-                voiceBtn.classList.add("gc-listening");
-            }
-        };
-
-        // Initial welcome message
-        setTimeout(function() {
-            addMsg("Hi! I'm Genfeel's assistant 👋\n\nHow can I help you today?", "bot");
-            setTimeout(function() {
-                addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
-            }, 400);
-        }, 600);
-    })();
-    </script>
+<!-- ===== GENFEEL CHATBOT - SELF CONTAINED ===== -->
+<!-- ===== GENFEEL CHATBOT WITH FULL BOOKING SYSTEM ===== -->
 
     <style>
         #gc-widget {
@@ -2239,16 +1488,786 @@
         }
     </style>
 
-    <script>
-        // Hide loading screen when React loads
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const loadingScreen = document.getElementById('loading-screen');
-                if (loadingScreen) {
-                    loadingScreen.style.display = 'none';
-                }
-            }, 100);
+    <div id="gc-widget">
+         <div id="gc-window">
+         <div id="gc-header">
+            <span id="gc-header-title">💬 Genfeel Assistant</span>
+            <div id="gc-header-buttons">
+                <button id="gc-reset" title="New Chat">🔄</button>
+                <button id="gc-close" title="Close">✕</button>
+            </div>
+        </div>
+        <div id="gc-progress">
+            <div id="gc-progress-bar">
+                <div class="gc-progress-dot" data-step="1"></div>
+                <div class="gc-progress-dot" data-step="2"></div>
+                <div class="gc-progress-dot" data-step="3"></div>
+                <div class="gc-progress-dot" data-step="4"></div>
+                <div class="gc-progress-dot" data-step="5"></div>
+                <div class="gc-progress-dot" data-step="6"></div>
+            </div>
+        </div>
+        <div id="gc-messages"></div>
+        <div id="gc-input-area">
+            <input type="text" id="gc-input" placeholder="Type your message...">
+            <button id="gc-send">Send</button>
+            <button id="gc-voice">🎤</button>
+            <button id="gc-mute" class="gc-muted">🔇</button>
+        </div>
+    </div>
+    <button id="gc-bubble">💬</button>
+</div>
+
+c
+        name: "",
+        email: "",
+        phone: "",
+        date: "",
+        dateDisplay: "",
+        time: "",
+        notes: "",
+        ref: ""
+    };
+
+    var services = [
+        { name: "Website - Starter", price: "£299", desc: "1-3 pages, responsive design" },
+        { name: "Website - Professional", price: "£749", desc: "5-8 pages, CMS, SEO", popular: true },
+        { name: "Website - Business", price: "£1,499", desc: "Dashboard, payments, portal" },
+        { name: "Mobile App", price: "From £499", desc: "iOS & Android development" },
+        { name: "AI Chatbot", price: "From £199", desc: "Smart chatbot for your site" },
+        { name: "Voice Agent", price: "From £249", desc: "Voice-powered assistant" },
+        { name: "General Consultation", price: "Free", desc: "Discuss your project needs" }
+    ];
+
+    var timeSlots = [
+        { time: "9:00 AM", available: true },
+        { time: "10:00 AM", available: true },
+        { time: "11:00 AM", available: true },
+        { time: "12:00 PM", available: false },
+        { time: "2:00 PM", available: true },
+        { time: "3:00 PM", available: true },
+        { time: "4:00 PM", available: true },
+        { time: "5:00 PM", available: true }
+    ];
+
+    // Open chat
+    bubble.onclick = function() {
+        chatWindow.classList.add("gc-open");
+        bubble.style.display = "none";
+    };
+
+    // Close chat and reset
+closeBtn.onclick = function() {
+    // Don't close if booking is in progress
+    if (bookingMode && bookingStep > 0) {
+        if (!confirm("Booking in progress. Close anyway?")) {
+            return;
+        }
+    }
+    
+    chatWindow.classList.remove("gc-open");
+    bubble.style.display = "flex";
+    
+    // Reset chat after closing
+    setTimeout(function() {
+        resetChat();
+    }, 300);
+};
+
+    // Reset chat button
+    resetBtn.onclick = function() {
+        resetChat();
+    };
+
+    // Mute toggle
+    muteBtn.onclick = function() {
+        isMuted = !isMuted;
+        if (isMuted) {
+            muteBtn.textContent = "🔇";
+            muteBtn.classList.add("gc-muted");
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        } else {
+            muteBtn.textContent = "🔊";
+            muteBtn.classList.remove("gc-muted");
+        }
+    };
+
+    // Reset chat function
+    function resetChat() {
+        messages.innerHTML = "";
+        bookingMode = false;
+        bookingStep = 0;
+        booking = { service: "", name: "", email: "", phone: "", date: "", dateDisplay: "", time: "", notes: "", ref: "" };
+        updateProgress(0);
+        clearExtras();
+        
+        addMsg("Hi! I'm Genfeel's assistant 👋\n\nHow can I help you today?", "bot");
+        setTimeout(function() {
+            addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
+        }, 400);
+    }
+
+    function addMsg(text, type) {
+        var div = document.createElement("div");
+        div.className = "gc-msg gc-msg-" + type;
+        div.innerHTML = text.replace(/\n/g, "<br>");
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addQuickBtns(options) {
+        var container = document.createElement("div");
+        container.className = "gc-quick-btns";
+        options.forEach(function(opt) {
+            var btn = document.createElement("button");
+            btn.className = "gc-quick-btn";
+            btn.textContent = opt;
+            btn.onclick = function() {
+                input.value = opt;
+                sendMsg();
+                container.remove();
+            };
+            container.appendChild(btn);
         });
-    </script>
+        messages.appendChild(container);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function addCancelBtn() {
+        var btn = document.createElement("button");
+        btn.className = "gc-cancel-btn";
+        btn.textContent = "✕ Cancel Booking";
+        btn.onclick = function() {
+            cancelBooking();
+        };
+        messages.appendChild(btn);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showServices() {
+        services.forEach(function(s) {
+            var card = document.createElement("div");
+            card.className = "gc-service-card";
+            card.innerHTML = '<div class="gc-service-card-title">' + s.name + (s.popular ? ' ⭐' : '') + '</div><div class="gc-service-card-price">' + s.price + ' • ' + s.desc + '</div>';
+            card.onclick = function() {
+                input.value = s.name;
+                sendMsg();
+            };
+            messages.appendChild(card);
+        });
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showDates() {
+        var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        var today = new Date();
+        var added = 0;
+        var current = new Date(today);
+        
+        while (added < 5) {
+            current.setDate(current.getDate() + 1);
+            var dayOfWeek = current.getDay();
+            if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+            
+            var dayName = days[dayOfWeek];
+            var dateStr = current.getDate() + " " + months[current.getMonth()];
+            var fullDate = dayName + ", " + dateStr;
+            
+            (function(fd) {
+                var btn = document.createElement("button");
+                btn.className = "gc-date-btn";
+                btn.innerHTML = '<span>' + dayName + '</span><span>' + dateStr + '</span>';
+                btn.onclick = function() {
+                    booking.dateDisplay = fd;
+                    input.value = fd;
+                    sendMsg();
+                };
+                messages.appendChild(btn);
+            })(fullDate);
+            
+            added++;
+        }
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showTimes() {
+        var grid = document.createElement("div");
+        grid.className = "gc-time-grid";
+        
+        timeSlots.forEach(function(slot) {
+            var btn = document.createElement("button");
+            btn.className = "gc-time-btn" + (slot.available ? "" : " gc-unavailable");
+            btn.textContent = slot.time;
+            
+            if (slot.available) {
+                btn.onclick = function() {
+                    input.value = slot.time;
+                    sendMsg();
+                };
+            }
+            grid.appendChild(btn);
+        });
+        
+        messages.appendChild(grid);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showSummary() {
+        var summary = document.createElement("div");
+        summary.className = "gc-summary";
+        summary.innerHTML = '<div class="gc-summary-title">📋 Booking Summary</div>' +
+            '<div class="gc-summary-row"><span class="gc-summary-label">Service</span><span class="gc-summary-value">' + booking.service + '</span></div>' +
+            '<div class="gc-summary-row"><span class="gc-summary-label">Name</span><span class="gc-summary-value">' + booking.name + '</span></div>' +
+            '<div class="gc-summary-row"><span class="gc-summary-label">Email</span><span class="gc-summary-value">' + booking.email + '</span></div>' +
+            '<div class="gc-summary-row"><span class="gc-summary-label">Phone</span><span class="gc-summary-value">' + booking.phone + '</span></div>' +
+            '<div class="gc-summary-row"><span class="gc-summary-label">Date</span><span class="gc-summary-value">' + booking.dateDisplay + '</span></div>' +
+            '<div class="gc-summary-row"><span class="gc-summary-label">Time</span><span class="gc-summary-value">' + booking.time + ' (UK)</span></div>' +
+            (booking.notes && booking.notes.toLowerCase() !== "skip" ? '<div class="gc-summary-row"><span class="gc-summary-label">Notes</span><span class="gc-summary-value">' + booking.notes + '</span></div>' : '') +
+            '<div class="gc-ref-number">Reference: ' + booking.ref + '</div>';
+        
+        messages.appendChild(summary);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function updateProgress(step) {
+        progress.style.display = step > 0 ? "block" : "none";
+        var dots = document.querySelectorAll(".gc-progress-dot");
+        dots.forEach(function(dot, i) {
+            dot.classList.remove("gc-active", "gc-done");
+            if (i + 1 < step) {
+                dot.classList.add("gc-done");
+            } else if (i + 1 === step) {
+                dot.classList.add("gc-active");
+            }
+        });
+    }
+
+    function generateRef() {
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var ref = "GF-";
+        for (var i = 0; i < 6; i++) {
+            ref += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return ref;
+    }
+
+    function isValidEmail(email) {
+        return email.indexOf("@") > 0 && email.indexOf(".") > 0;
+    }
+
+    function isValidPhone(phone) {
+        return phone.replace(/\D/g, "").length >= 10;
+    }
+
+    function clearExtras() {
+        var items = document.querySelectorAll(".gc-quick-btns, .gc-service-card, .gc-date-btn, .gc-time-grid, .gc-cancel-btn");
+        items.forEach(function(el) { el.remove(); });
+    }
+
+    function startBooking() {
+        bookingMode = true;
+        bookingStep = 1;
+        booking = { service: "", name: "", email: "", phone: "", date: "", dateDisplay: "", time: "", notes: "", ref: "" };
+        updateProgress(1);
+        
+        setTimeout(function() {
+            addMsg("Great! Let's book your consultation. 📅\n\nFirst, which service are you interested in?", "bot");
+            speak("Great! Let's book your consultation. Which service are you interested in?");
+            showServices();
+            addCancelBtn();
+        }, 500);
+    }
+
+    function cancelBooking() {
+        bookingMode = false;
+        bookingStep = 0;
+        updateProgress(0);
+        clearExtras();
+        addMsg("Booking cancelled. No worries! 👍\n\nIs there anything else I can help with?", "bot");
+        addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
+    }
+
+    function handleBooking(text) {
+        var msg = text.toLowerCase().trim();
+        
+        switch(bookingStep) {
+            case 1:
+                booking.service = text;
+                bookingStep = 2;
+                updateProgress(2);
+                setTimeout(function() {
+                    addMsg("Excellent choice! ✨\n\nWhat's your full name?", "bot");
+                    speak("Excellent choice! What's your full name?");
+                }, 500);
+                break;
+                
+            case 2:
+                if (text.trim().length < 2) {
+                    addMsg("Please enter your full name (at least 2 characters).", "bot");
+                    return;
+                }
+                booking.name = text.trim();
+                bookingStep = 3;
+                updateProgress(3);
+                setTimeout(function() {
+                    addMsg("Nice to meet you, " + booking.name.split(" ")[0] + "! 👋\n\nWhat's your email address?", "bot");
+                    speak("Nice to meet you! What's your email address?");
+                }, 500);
+                break;
+                
+            case 3:
+                if (!isValidEmail(text)) {
+                    addMsg("Please enter a valid email address (e.g., you@example.com).", "bot");
+                    return;
+                }
+                booking.email = text.trim().toLowerCase();
+                bookingStep = 4;
+                updateProgress(4);
+                setTimeout(function() {
+                    addMsg("Got it! 📧\n\nWhat's your phone number?", "bot");
+                    speak("Got it! What's your phone number?");
+                }, 500);
+                break;
+                
+            case 4:
+                if (!isValidPhone(text)) {
+                    addMsg("Please enter a valid phone number (at least 10 digits).", "bot");
+                    return;
+                }
+                booking.phone = text.trim();
+                bookingStep = 5;
+                updateProgress(5);
+                setTimeout(function() {
+                    addMsg("Perfect! 📱\n\nWhen would you like to schedule?\n\n(Mon-Fri, 9AM-6PM UK time)", "bot");
+                    speak("Perfect! When would you like to schedule?");
+                    showDates();
+                }, 500);
+                break;
+                
+            case 5:
+                if (!booking.dateDisplay) {
+                    booking.dateDisplay = text;
+                }
+                bookingStep = 6;
+                updateProgress(6);
+                setTimeout(function() {
+                    addMsg("Great! " + booking.dateDisplay + " it is! 📅\n\nWhat time works best?", "bot");
+                    speak("Great! What time works best for you?");
+                    showTimes();
+                }, 500);
+                break;
+                
+            case 6:
+                booking.time = text;
+                bookingStep = 7;
+                setTimeout(function() {
+                    addMsg("Almost done! 📝\n\nAnything specific you'd like to discuss?\n\n(Type your notes or 'skip' to continue)", "bot");
+                    speak("Almost done! Any notes, or say skip to continue.");
+                    addQuickBtns(["Skip", "New website", "Redesign", "E-commerce", "App idea", "Just exploring"]);
+                }, 500);
+                break;
+  case 7:
+    booking.notes = msg === "skip" ? "" : text;
+    booking.ref = generateRef();
+    bookingStep = 0;
+    bookingMode = false;
+    updateProgress(0);
+    
+    setTimeout(function() {
+        addMsg("🎉 Booking Confirmed!\n\nHere's your appointment summary:", "bot");
+        showSummary();
+        
+        setTimeout(function() {
+            addMsg("We've sent a confirmation to " + booking.email + "\n\nWe'll remind you 24 hours before.\n\nThank you for choosing Genfeel! 💜", "bot");
+            speak("Booking confirmed! Your reference is " + booking.ref + ". Check your email for confirmation.");
+            submitBooking();
+            
+            setTimeout(function() {
+                addQuickBtns(["View Services", "Pricing", "Contact", "New Chat"]);
+            }, 500);
+        }, 500);
+    }, 500);
+    break;
+}
+
+function submitBooking() {
+    console.log("🚀 Sending booking to Zapier...");
+    
+    if (!booking.ref) {
+        booking.ref = generateRef();
+    }
+    
+    // Send booking data to Zapier using image method (no CORS)
+    const bookingData = {
+        reference: booking.ref,
+        service: booking.service,
+        name: booking.name,
+        email: booking.email,
+        phone: booking.phone,
+        date: booking.dateDisplay,
+        time: booking.time,
+        timezone: "UK",
+        notes: booking.notes || "No notes",
+        source: "Genfeel Chatbot"
+    };
+    
+    // Method 1: Image GET request (bypasses CORS)
+    try {
+        const params = new URLSearchParams();
+        for (let key in bookingData) {
+            params.append(key, bookingData[key]);
+        }
+        
+        const img = new Image();
+        img.src = 'https://hooks.zapier.com/hooks/catch/26098855/uqos5cs/?' + params.toString() + '&_=' + Date.now();
+        img.style.display = 'none';
+        document.body.appendChild(img);
+        
+        console.log("✅ Booking sent via image method");
+    } catch (e) {
+        console.log("Image method error:", e);
+    }
+    
+    // Show success message
+    setTimeout(function() {
+        addMsg(`✅ <strong>Booking Submitted!</strong><br><br>
+        🔖 <strong>Reference:</strong> ${booking.ref}<br>
+        📅 <strong>Date:</strong> ${booking.dateDisplay}<br>
+        ⏰ <strong>Time:</strong> ${booking.time} (UK)<br>
+        📧 <strong>Confirmation sent to:</strong> ${booking.email}<br>
+        📧 <strong>Copy sent to:</strong> hello@genfeel.co.uk<br><br>
+        <em>Check your email for confirmation.</em>`, "bot");
+    }, 500);
+}
+    function speak(text) {
+        if (isMuted) return;
+        if (!window.speechSynthesis) return;
+        
+        window.speechSynthesis.cancel();
+        
+        var clean = text
+            .replace(/\n/g, ". ")
+            .replace(/[✓✅❤️💜👋🎉📅📱💬🌐🟩🟦🟨📦💰🛠️⚙️•📧📞📍⏰🎯💡🎨⚡🤝📋👤💳🛍️📝🔍📊🤖🗣️⭐📈🚀✨]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+        
+        var utter = new SpeechSynthesisUtterance(clean.substring(0, 250));
+        
+        var voices = window.speechSynthesis.getVoices();
+        var preferredVoices = ["Google UK English Female", "Google UK English Male", "Microsoft Libby", "Samantha", "Karen", "Daniel"];
+        var selectedVoice = null;
+        
+        for (var i = 0; i < preferredVoices.length; i++) {
+            for (var j = 0; j < voices.length; j++) {
+                if (voices[j].name.indexOf(preferredVoices[i]) >= 0) {
+                    selectedVoice = voices[j];
+                    break;
+                }
+            }
+            if (selectedVoice) break;
+        }
+        
+        if (!selectedVoice) {
+            for (var k = 0; k < voices.length; k++) {
+                if (voices[k].lang.indexOf("en-GB") >= 0 || voices[k].lang.indexOf("en-US") >= 0) {
+                    selectedVoice = voices[k];
+                    break;
+                }
+            }
+        }
+        
+        if (selectedVoice) utter.voice = selectedVoice;
+        
+        utter.lang = "en-GB";
+        utter.rate = 0.95;
+        utter.pitch = 1.05;
+        utter.volume = 0.9;
+        
+        window.speechSynthesis.speak(utter);
+    }
+
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = function() {
+            window.speechSynthesis.getVoices();
+        };
+        window.speechSynthesis.getVoices();
+    }
+
+    function getReply(msg) {
+        var m = msg.toLowerCase();
+
+        // Handle "New Chat" quick button
+        if (m === "new chat") {
+            resetChat();
+            return null;
+        }
+
+        if (m.includes("hello") || m.includes("hi") || m.includes("hey")) {
+            setTimeout(function() { addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]); }, 500);
+            return "Hey there! 👋 Welcome to Genfeel — tech with a heartbeat.\n\nHow can I help you today?";
+        }
+
+        if (m.includes("service") || m === "view services") {
+            setTimeout(function() { addQuickBtns(["Websites", "Mobile Apps", "AI Chatbots", "Pricing"]); }, 500);
+            return "We offer:\n\n🌐 Website Development — from £299\n📱 Mobile Apps — from £499\n💬 Chatbot and Voice Agent AI — from £199\n\nWhich interests you?";
+        }
+
+        if (m.includes("price") || m.includes("cost") || m === "pricing") {
+            setTimeout(function() { addQuickBtns(["Starter £299", "Professional £749", "Business £1499", "Book Consultation"]); }, 500);
+            return "💰 Our Pricing:\n\n🟩 Starter: £299\n🟦 Professional: £749 ⭐\n🟨 Business: £1,499\n\n📱 Apps: from £499\n💬 Chatbots: from £199\n🗣️ Voice Agents: from £249";
+        }
+
+        if (m.includes("website")) {
+            setTimeout(function() { addQuickBtns(["Starter £299", "Professional £749", "Business £1499", "Book Consultation"]); }, 500);
+            return "🌐 Website Packages:\n\n🟩 Starter — £299\n1-3 pages, responsive, hosting\n\n🟦 Professional — £749 ⭐\n5-8 pages, CMS, blog, SEO\n\n🟨 Business — £1,499\nDashboard, payments, portal";
+        }
+
+        if (m.includes("starter")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "Professional Package"]); }, 500);
+            return "🟩 STARTER — £299\n\n✓ 1-3 page website\n✓ Responsive design\n✓ Free domain & hosting (1yr)\n✓ Basic SEO\n✓ Contact form\n✓ Email support\n\nAdd-ons:\n🛍️ Online store: +£149\n📅 Booking: +£99";
+        }
+
+        if (m.includes("professional")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "Business Package"]); }, 500);
+            return "🟦 PROFESSIONAL — £749 ⭐\n\nEverything in Starter, plus:\n✓ 5-8 custom pages\n✓ Animations\n✓ CMS for easy editing\n✓ Blog section\n✓ Local SEO\n✓ Google Analytics\n✓ 1-hour strategy call\n✓ 2 revisions\n\nAdd-ons:\n📱 Mobile app: +£499\n💬 Chatbot: +£199";
+        }
+
+        if (m.includes("business")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "Compare Packages"]); }, 500);
+            return "🟨 BUSINESS — £1,499\n\nEverything in Professional, plus:\n✓ Backend dashboard\n✓ Payment processing\n✓ Client portal\n✓ Advanced SEO\n✓ 3 months health checks\n✓ Priority support\n\nAdd-ons:\n📱 Custom app: +£699\n🤖 AI chatbot: +£349";
+        }
+
+        if (m.includes("app") || m.includes("mobile")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
+            return "📱 Mobile Apps\n\n✓ iOS & Android\n✓ Native performance\n✓ Push notifications\n✓ App store optimization\n\nPricing: from £499";
+        }
+
+        if (m.includes("chatbot") || m.includes("ai") || m.includes("voice")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
+            return "💬 Chatbot and Voice Agent AI\n\n🤖 Chatbots — from £199\n🗣️ Voice Agents — from £249\n\n✓ Natural language\n✓ Brand voice training\n✓ 24/7 availability\n✓ Analytics included";
+        }
+
+        if (m.includes("contact") || m.includes("email") || m.includes("phone")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "View Services"]); }, 500);
+            return "📞 Contact Us\n\n📧 hello@genfeel.co.uk\n📞 +44 7383 027802\n📍 London, UK\n⏰ Mon-Fri, 9AM-6PM\n\nOr book a consultation right now!";
+        }
+
+        if (m.includes("book") || m.includes("appointment") || m.includes("consultation") || m.includes("schedule")) {
+            startBooking();
+            return null;
+        }
+
+        if (m.includes("about") || m.includes("genfeel")) {
+            setTimeout(function() { addQuickBtns(["View Services", "Book Consultation"]); }, 500);
+            return "Genfeel creates digital experiences that feel human.\n\n✅ 50+ Projects\n✅ 30+ Happy Clients\n✅ 98% Satisfaction\n\nOur motto: Tech with a heartbeat 💜";
+        }
+
+        if (m.includes("maintenance") || m.includes("support")) {
+            setTimeout(function() { addQuickBtns(["Book Consultation", "View Pricing"]); }, 500);
+            return "⚙️ Maintenance Plans\n\n⚡ Essential: £49/mo\n📈 Growth: £99/mo\n🚀 Enterprise: £199/mo\n\nAll include hosting, backups & security!";
+        }
+
+        if (m.includes("thank") || m.includes("bye") || m.includes("goodbye")) {
+            setTimeout(function() {
+                addMsg("💬 Chat will reset in 5 seconds...", "system");
+                setTimeout(function() {
+                    resetChat();
+                }, 5000);
+            }, 2000);
+            return "You're welcome! 💜\n\n📧 hello@genfeel.co.uk\n📞 +44 7383 027802\n\nHave a great day! 👋";
+        }
+
+        setTimeout(function() { addQuickBtns(["Services", "Pricing", "Book Consultation", "Contact"]); }, 500);
+        return "Thanks for your message! I can help with:\n• Services & packages\n• Pricing\n• Booking consultations\n\nWhat would you like to know?";
+    }
+
+    function sendMsg() {
+        var text = input.value.trim();
+        if (!text) return;
+
+        addMsg(text, "user");
+        input.value = "";
+        clearExtras();
+
+        if (bookingMode) {
+            handleBooking(text);
+            return;
+        }
+
+        setTimeout(function() {
+            var reply = getReply(text);
+            if (reply) {
+                addMsg(reply, "bot");
+                speak(reply);
+            }
+        }, 500);
+    }
+
+    sendBtn.onclick = sendMsg;
+    input.onkeypress = function(e) {
+        if (e.key === "Enter") sendMsg();
+    };
+
+    if (window.SpeechRecognition || window.webkitSpeechRecognition) {
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SR();
+        recognition.lang = "en-GB";
+
+        recognition.onresult = function(e) {
+            input.value = e.results[0][0].transcript;
+            sendMsg();
+        };
+
+        recognition.onend = function() {
+            isListening = false;
+            voiceBtn.textContent = "🎤";
+            voiceBtn.classList.remove("gc-listening");
+        };
+    }
+
+    voiceBtn.onclick = function() {
+        if (!recognition) {
+            alert("Voice not supported. Use Chrome.");
+            return;
+        }
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+            isListening = true;
+            voiceBtn.textContent = "⏹️";
+            voiceBtn.classList.add("gc-listening");
+        }
+    };
+
+    // Initial welcome message
+    setTimeout(function() {
+        addMsg("Hi! I'm Genfeel's assistant 👋\n\nHow can I help you today?", "bot");
+        setTimeout(function() {
+            addQuickBtns(["View Services", "Pricing", "Book Consultation", "Contact"]);
+        }, 400);
+    }, 600);
+})();
+</script>
+
+<script>
+// ===== COMPREHENSIVE DEBUG SCRIPT =====
+console.log('=== GENFEEL DEBUG START ===');
+
+// Wait for everything to load
+setTimeout(function() {
+    console.log('=== CHECKING SERVICE LINKS ===');
+    
+    // 1. Check if elements exist
+    const links = document.querySelectorAll('.service-link');
+    const cards = document.querySelectorAll('.service-card');
+    
+    console.log('Service links found:', links.length);
+    console.log('Service cards found:', cards.length);
+    
+    // 2. Add DOM click listeners
+    links.forEach((link, i) => {
+        // Store original if any
+        const originalOnClick = link.onclick;
+        
+        // Wrap with debug
+        link.onclick = function(e) {
+            console.log(`🔗 Link ${i} clicked via DOM`);
+            console.log('   Element:', this);
+            console.log('   Text:', this.textContent);
+            
+            // Call original
+            if (originalOnClick) {
+                console.log('   Calling original onClick...');
+                return originalOnClick.call(this, e);
+            } else {
+                console.log('   No original onClick found!');
+            }
+        };
+        
+        // Also add event listener
+        link.addEventListener('click', function(e) {
+            console.log(`🎯 DOM Event: Link ${i} clicked`);
+        }, true);
+    });
+    
+    // 3. Check titles
+    cards.forEach((card, i) => {
+        const title = card.querySelector('.service-title');
+        console.log(`Card ${i} title:`, title ? title.textContent : 'No title');
+    });
+    
+    console.log('=== DEBUG SETUP COMPLETE ===');
+    console.log('Click any "Learn More" button and check console...');
+}, 2000);
+
+// Monitor URL changes
+let lastURL = window.location.href;
+setInterval(function() {
+    if (window.location.href !== lastURL) {
+        console.log('🌐 URL changed from:', lastURL);
+        console.log('🌐 URL changed to:', window.location.href);
+        lastURL = window.location.href;
+    }
+}, 100);
+// ===== END DEBUG =====
+// ==== END DEBUG ====
+</script>  <!-- ADD THIS CLOSING TAG -->
+
+<script>  <!-- THIS IS THE START OF A NEW SCRIPT TAG -->
+(function () {
+    console.log(" Genfeel Chatbot script loaded");
+})();  <!-- FIX THIS - ADD CLOSING PARENTHESES -->
+
+const chatbotWindow = document.getElementById('gc-window');
+const bubble = document.getElementById('gc-bubble');
+const closeBtn = document.getElementById('gc-close');
+const resetBtn = document.getElementById('gc-reset');
+
+// Toggle open
+bubble.onclick = function () {
+    chatbotWindow.classList.toggle('gc-open');  <!-- FIXED: chatWindow -> chatbotWindow -->
+    bubble.style.display = chatbotWindow.classList.contains('gc-open') ? 'none' : 'flex';  <!-- FIXED THIS LINE -->
+};
+    // Close button
+    closeBtn.onclick = function () {
+        chatWindow.classList.remove("gc-open");
+        bubble.style.display = "flex";
+    };
+
+    // Reset chat
+    resetBtn.onclick = function () {
+        document.getElementById("gc-messages").innerHTML = "";
+        addMsg("Hi! I'm Genfeel's assistant 👋<br><br>How can I help you today?", "bot");
+    };
+
+    function addMsg(text, type) {
+    const div = document.createElement("div");
+    div.className = "gc-msg gc-msg-" + type;
+    div.innerHTML = text;
+    
+    // Append to messages container
+    const messagesContainer = document.getElementById("gc-messages");
+    messagesContainer.appendChild(div);
+    
+    // Scroll to the new message
+    div.scrollIntoView({ behavior: "smooth" });
+    
+    // Also scroll the container to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Initial welcome message
+setTimeout(function () {
+    addMsg("Hi! I'm Genfeel's assistant 😊<br><br>How can I assist you today?", "bot");
+}, 500);
+  
+</script>
 </body>
 </html>
+
+
+
+
+
